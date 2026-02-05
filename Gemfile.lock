@@ -108,6 +108,9 @@ GEM
     bootsnap (1.22.0)
       msgpack (~> 1.2)
     builder (3.3.0)
+    bullet (8.1.0)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     cgi (0.5.1)
     childprocess (5.1.0)
       logger (~> 1.5)
@@ -283,6 +286,7 @@ GEM
     tsort (0.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uniform_notifier (1.18.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     warden-jwt_auth (0.12.0)
@@ -306,6 +310,7 @@ PLATFORMS
 DEPENDENCIES
   aws-sdk-s3 (~> 1.213)
   bootsnap
+  bullet (~> 8.1)
   devise (~> 5.0)
   devise-jwt (~> 0.13.0)
   figaro (~> 1.3)

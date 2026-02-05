@@ -23,10 +23,12 @@ gem 'redis-namespace'
 group :development, :test do
   gem "letter_opener", "~> 1.10"
   gem "pry-rails"
+  gem "bullet", "~> 8.1"
 end
 
 group :development do
 end
+
 
 
 
