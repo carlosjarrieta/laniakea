@@ -1,0 +1,22 @@
+# Laniakea Project Rules
+
+## 🛠 Tech Stack & Versions
+- **Ruby**: 3.2.2 (RVM)
+- **Rails**: 7.1.6 (API Only)
+- **Database**: PostgreSQL 18 (Local host, User: deploy)
+- **Auth**: Devise + Devise-JWT (Sessions & Registrations custom JSON)
+- **Background Jobs**: Sidekiq 6.5.5 (Redis Namespace: `laniakea`)
+- **Storage**: ActiveStorage with DigitalOcean Spaces (S3 logic)
+- **Timezone System**: Standard UTC in DB. Internal Rails time must sync with `user.timezone`.
+
+## 📜 Coding Patterns
+- **Secrets Management**: Always use Figaro (`config/application.yml`). Use `DEVISE_JWT_SECRET_KEY` for JWT.
+- **API Response**: Consistent JSON responses. NO `jbuilder`.
+- **Git**: Clean commits. `tmp/` and `log/` are IGNORED.
+- **i18n**: Rails is the "Source of Truth" for translations, served via API.
+- **Roles**: Use User model `enum role: { advertiser: 0, superadmin: 1 }`. Default is `advertiser`.
+
+## 🚀 Infrastructure
+- **Deployment**: VPS (Pure Rails + Next.js PWA).
+- **WebSockets**: ActionCable mounted on `/cable` with Redis adapter.
+- **Redis**: Use namespace `laniakea` to avoid collisions on VPS.

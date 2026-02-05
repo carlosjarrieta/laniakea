@@ -15,4 +15,6 @@ class User < ApplicationRecord
   def set_default_role
     self.role ||= :advertiser
   end
+
+  validates :timezone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
 end
