@@ -6,6 +6,8 @@ class User < ApplicationRecord
          :confirmable, :lockable, :trackable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_one_attached :profile_image
+
   enum role: { advertiser: 0, superadmin: 1 }
 
   after_initialize :set_default_role, if: :new_record?
