@@ -1,3 +1,4 @@
+# Traducciones para el modelo User
 es:
   activerecord:
     models:
@@ -9,7 +10,7 @@ es:
         password_confirmation: "Confirmación de contraseña"
         role: "Rol"
         timezone: "Zona horaria"
-  
+
   users:
     registrations:
       signed_up: "Registro exitoso."

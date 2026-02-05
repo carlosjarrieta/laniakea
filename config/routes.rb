@@ -12,5 +12,7 @@ Rails.application.routes.draw do
   }
 
 
+  resources :locales, only: [:show], constraints: { id: /en|es/ }
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
