@@ -1,4 +1,4 @@
-# Laniakea Project Rules
+# Laniakea Project Rules for backend
 
 ## 🛠 Tech Stack & Versions
 * Siempre actua como un senior developer ruby on rails
@@ -27,3 +27,20 @@
 - **Deployment**: VPS (Pure Rails + Next.js PWA).
 - **WebSockets**: ActionCable mounted on `/cable` with Redis adapter.
 - **Redis**: Use namespace `laniakea` to avoid collisions on VPS.
+
+
+# Laniakea Project Rules for frontend
+
+## 🛠 Tech Stack & Versions
+* Next.js 14 (App Router)
+* TypeScript
+* Tailwind CSS
+* PWA
+* React Native
+* Usar la libreria shadcn/ui para los componentes
+* crear componentes en la carpeta app/components
+* crear componente / dashboard iguales al los ejemplos que tiene la pagina de shadcn/ui
+* Siempre crear custom hooks para la logica de negocio
+* Intentar que los componentes sean cortos y reutilizables
+
+
