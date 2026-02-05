@@ -1,0 +1,21 @@
+es:
+  activerecord:
+    models:
+      user: "Usuario"
+    attributes:
+      user:
+        email: "Correo electrónico"
+        password: "Contraseña"
+        password_confirmation: "Confirmación de contraseña"
+        role: "Rol"
+        timezone: "Zona horaria"
+  
+  users:
+    registrations:
+      signed_up: "Registro exitoso."
+      account_deleted: "Cuenta eliminada exitosamente."
+      signup_failed: "El usuario no pudo ser creado exitosamente."
+    sessions:
+      logged_in: "Sesión iniciada exitosamente."
+      logged_out: "Sesión cerrada exitosamente."
+      session_not_found: "No se encontró una sesión activa."

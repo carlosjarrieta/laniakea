@@ -1,0 +1,21 @@
+en:
+  activerecord:
+    models:
+      user: "User"
+    attributes:
+      user:
+        email: "Email"
+        password: "Password"
+        password_confirmation: "Password Confirmation"
+        role: "Role"
+        timezone: "Timezone"
+  
+  users:
+    registrations:
+      signed_up: "Signed up successfully."
+      account_deleted: "Account deleted successfully."
+      signup_failed: "User couldn't be created successfully."
+    sessions:
+      logged_in: "Logged in successfully."
+      logged_out: "Logged out successfully."
+      session_not_found: "Couldn't find an active session."

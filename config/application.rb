@@ -22,6 +22,8 @@ module Laniakea
     # in config/environments, which are processed later.
     #
     config.time_zone = "UTC"
+    config.i18n.default_locale = :es
+    config.i18n.available_locales = [:en, :es]
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Only loads a smaller set of middleware suitable for API only apps.

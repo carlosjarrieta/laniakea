@@ -1,6 +1,13 @@
 # Laniakea Project Rules
 
 ## 🛠 Tech Stack & Versions
+* Siempre actua como un senior developer ruby on rails
+* Intenta escribir el código lo más optimizado posible usando las mejores prácticas de ruby on rails
+* Siempre que sea possible usa DRY (Don't Repeat Yourself), no crees código repetido, no controladores muy largos
+* Usa Concerns para organizar el código
+* Usa ActiveJob para tareas asíncronas
+* Para el tema de las traducciones usa i18n y crea archivos de traducción en inglés y español en `config/locales` para cada     modelo. Ejemplo si estamos trabajando con el modelo User, crearemos un archivo user.en.yml y user.es.yml
+
 - **Ruby**: 3.2.2 (RVM)
 - **Rails**: 7.1.6 (API Only)
 - **Database**: PostgreSQL 18 (Local host, User: deploy)
