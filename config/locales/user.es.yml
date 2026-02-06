@@ -1,5 +1,5 @@
-# Traducciones para el modelo User
 es:
+  # Traducciones para el modelo User
   activerecord:
     models:
       user: "Usuario"
