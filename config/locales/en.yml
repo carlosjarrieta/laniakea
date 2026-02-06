@@ -29,3 +29,47 @@
 
 en:
   hello: "Hello world"
+  errors:
+    password_mismatch: "Passwords do not match"
+  metadata:
+    title: "Laniakea | Ad Orchestrator"
+    description: "The AI-powered ad orchestration platform"
+  login:
+    title: "Login to your account"
+    subtitle: "Access your ad orchestration panel."
+    email_label: "Email"
+    email_placeholder: "name@example.com"
+    password_label: "Password"
+    password_placeholder: "••••••••"
+    forgot_password: "Forgot your password?"
+    submit_button: "Login to Laniakea"
+    submitting: "Connecting..."
+    or_continue_with: "Or continue with"
+    google_login: "Google"
+    new_here: "New to the network?"
+    create_account: "Create your account here"
+    sidebar_title: "Laniakea Supercluster"
+    sidebar_desc: "Our AI orchestrating ad networks like perfectly aligned galaxies."
+    success_message: "Welcome to the Laniakea supercluster!"
+  signup:
+    title: "Create your account"
+    subtitle: "Be part of the smartest ad network."
+    name_label: "Full name"
+    name_placeholder: "John Doe"
+    email_label: "Email"
+    email_placeholder: "name@example.com"
+    password_label: "Password"
+    password_placeholder: "••••••••"
+    confirm_password_label: "Confirm Password"
+    submit_button: "Sign up for Laniakea"
+    submitting: "Creating account..."
+    or_continue_with: "Or connect with"
+    google_signup: "Google"
+    already_have_account: "Already have an account?"
+    login_here: "Login here"
+    sidebar_title: "Join the Supercluster"
+    sidebar_desc: "Start orchestrating your ad campaigns with the power of the Laniakea supercluster."
+  mailer:
+    layout:
+      title: "Laniakea"
+      all_rights_reserved: "All rights reserved."

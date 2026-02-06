@@ -12,10 +12,22 @@ en:
   
   users:
     registrations:
-      signed_up: "Signed up successfully."
+      signed_up: "Welcome to the Laniakea network! Please check your email to confirm."
       account_deleted: "Account deleted successfully."
       signup_failed: "User couldn't be created successfully."
     sessions:
       logged_in: "Logged in successfully."
       logged_out: "Logged out successfully."
       session_not_found: "Couldn't find an active session."
+
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Confirmation instructions"
+        greeting: "Welcome!"
+        hello: "Hello %{name},"
+        thank_you: "Thank you for registering at Laniakea. We are excited to have you with us."
+        instruction: "To complete your registration and ensure the security of your account, please confirm your email address by clicking the button below:"
+        action: "Confirm my account"
+        fallback: "If the button doesn't work, you can copy and paste the following link into your browser:"
+        ignore: "If you didn't create this account, simply ignore this message."

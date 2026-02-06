@@ -6,7 +6,9 @@
 * Siempre que sea possible usa DRY (Don't Repeat Yourself), no crees código repetido, no controladores muy largos
 * Usa Concerns para organizar el código
 * Usa ActiveJob para tareas asíncronas
-* Para el tema de las traducciones usa i18n y crea archivos de traducción en inglés y español en `config/locales` para cada     modelo. Ejemplo si estamos trabajando con el modelo User, crearemos un archivo user.en.yml y user.es.yml
+* Para el tema de las traducciones usa i18n y crea archivos de traducción en inglés y español en `config/locales` para cada modelo. Ejemplo si estamos trabajando con el modelo User, crearemos un archivo user.en.yml y user.es.yml
+* IMPORTANTE: Sigue siempre el principio de "Backend-Driven UI Text". El frontend NO debe tener textos "hardcodeados" (cadenas de texto fijas). El backend debe servir todas las traducciones a través del endpoint `/locales/:locale`.
+* Cada vez que crees o modifiques una vista o componente (Front o Back), ASEGÚRATE de agregar sus correspondientes claves de traducción en los archivos YML.
 
 - **Ruby**: 3.2.2 (RVM)
 - **Rails**: 7.1.6 (API Only)

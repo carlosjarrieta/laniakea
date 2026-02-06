@@ -24,7 +24,11 @@ export const useAuth = () => {
   const handleSignup = async (userData: any) => {
     try {
       const response = await api.post('/signup', { user: userData });
-      return { success: true, data: response.data.data };
+      return { 
+        success: true, 
+        data: response.data.data,
+        message: response.data.status.message 
+      };
     } catch (error: any) {
       return { 
         success: false, 

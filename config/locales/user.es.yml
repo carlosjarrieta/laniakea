@@ -13,10 +13,22 @@ es:
 
   users:
     registrations:
-      signed_up: "Registro exitoso."
+      signed_up: "¡Bienvenido a la red Laniakea! Revisa tu correo para confirmar."
       account_deleted: "Cuenta eliminada exitosamente."
       signup_failed: "El usuario no pudo ser creado exitosamente."
     sessions:
       logged_in: "Sesión iniciada exitosamente."
       logged_out: "Sesión cerrada exitosamente."
       session_not_found: "No se encontró una sesión activa."
+
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: "Instrucciones de confirmación"
+        greeting: "¡Bienvenido/a!"
+        hello: "Hola %{name},"
+        thank_you: "Gracias por registrarte en Laniakea. Estamos emocionados de tenerte con nosotros."
+        instruction: "Para completar tu registro y asegurar la seguridad de tu cuenta, por favor confirma tu dirección de correo electrónico haciendo clic en el botón de abajo:"
+        action: "Confirmar mi cuenta"
+        fallback: "Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:"
+        ignore: "Si no creaste esta cuenta, simplemente ignora este mensaje."

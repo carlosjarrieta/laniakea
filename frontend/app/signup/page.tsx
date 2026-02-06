@@ -12,7 +12,11 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Command } from "lucide-react";
 
+import { useTranslations } from "@/hooks/use-translations";
+import { useLanguage } from "@/components/providers/language-provider";
+
 export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -20,17 +24,21 @@ export default function SignupPage() {
   const { handleSignup } = useAuth();
   const router = useRouter();
 
+  const { locale, setLocale } = useLanguage();
+  const { t, isLoading: isTransLoading } = useTranslations(locale); 
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (password !== passwordConfirmation) {
-      toast.error("Las contraseñas no coinciden");
+      toast.error(t('errors.password_mismatch') || "Las contraseñas no coinciden");
       return;
     }
 
     setIsLoading(true);
 
     const result = await handleSignup({ 
+      name,
       email, 
       password, 
       password_confirmation: passwordConfirmation,
@@ -38,7 +46,7 @@ export default function SignupPage() {
     });
 
     if (result.success) {
-      toast.success("¡Bienvenido a la red Laniakea! Revisa tu correo para confirmar.");
+      toast.success(result.message);
       router.push("/login");
     } else {
       toast.error(result.message);
@@ -49,6 +57,18 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fafafa] p-6 relative overflow-hidden font-sans">
+      {/* Language Switcher */}
+      <div className="absolute top-6 right-6 z-50">
+        <Button 
+          variant="outline" 
+          size="sm"
+          onClick={() => setLocale(locale === 'es' ? 'en' : 'es')}
+          className="bg-white/80 backdrop-blur-sm border-zinc-200 font-bold hover:bg-white transition-all shadow-sm"
+        >
+          {locale === 'es' ? '🇺🇸 EN' : '🇪🇸 ES'}
+        </Button>
+      </div>
+
       {/* Subtle background nodes */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-100/50 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-50/50 blur-[120px] rounded-full" />
@@ -65,9 +85,9 @@ export default function SignupPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent flex flex-col justify-end p-10 text-white">
             <div className="space-y-2">
-               <h2 className="text-2xl font-bold tracking-tight">Únete al Cúmulo</h2>
+               <h2 className="text-2xl font-bold tracking-tight">{t('signup.sidebar_title')}</h2>
                <p className="text-zinc-300 text-sm leading-relaxed max-w-sm">
-                 Comienza a orquestar tus campañas publicitarias con el poder del supercúmulo de Laniakea.
+                 {t('signup.sidebar_desc')}
                </p>
             </div>
           </div>
@@ -83,20 +103,32 @@ export default function SignupPage() {
         <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center bg-white">
           <div className="mb-10 text-center md:text-left">
             <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">
-              Crear tu cuenta
+              {t('signup.title')}
             </h1>
             <p className="text-zinc-500 font-medium">
-              Forma parte de la red publicitaria más inteligente.
+              {t('signup.subtitle')}
             </p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-sm font-bold text-zinc-700">Email</Label>
+              <Label htmlFor="name" className="text-sm font-bold text-zinc-700">{t('signup.name_label')}</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder={t('signup.name_placeholder')}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="h-11 border-zinc-200 focus:border-violet-500 focus:ring-violet-500/10 rounded-xl transition-all"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-sm font-bold text-zinc-700">{t('signup.email_label')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="nombre@ejemplo.com"
+                placeholder={t('signup.email_placeholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -104,11 +136,11 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-sm font-bold text-zinc-700">Contraseña</Label>
+              <Label htmlFor="password" className="text-sm font-bold text-zinc-700">{t('signup.password_label')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('signup.password_placeholder')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -116,11 +148,11 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password_confirmation" className="text-sm font-bold text-zinc-700">Confirmar Contraseña</Label>
+              <Label htmlFor="password_confirmation" className="text-sm font-bold text-zinc-700">{t('signup.confirm_password_label')}</Label>
               <Input
                 id="password_confirmation"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t('signup.password_placeholder')}
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 required
@@ -136,16 +168,16 @@ export default function SignupPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Creando cuenta...
+                  {t('signup.submitting')}
                 </>
               ) : (
-                "Registrarme en Laniakea"
+                t('signup.submit_button')
               )}
             </Button>
             
             <div className="relative flex items-center gap-3 py-2">
               <div className="h-[1px] bg-zinc-100 flex-1" />
-              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest">O conéctate con</span>
+              <span className="text-[10px] text-zinc-400 font-black uppercase tracking-widest">{t('signup.or_continue_with')}</span>
               <div className="h-[1px] bg-zinc-100 flex-1" />
             </div>
 
@@ -160,13 +192,13 @@ export default function SignupPage() {
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.27.81-.57z" fill="#FBBC05"/>
                 <path d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
               </svg>
-              Google
+              {t('signup.google_signup')}
             </Button>
 
             <div className="text-center text-sm pt-4">
-              <span className="text-zinc-500 font-medium">¿Ya tienes cuenta?</span>{" "}
+              <span className="text-zinc-500 font-medium">{t('signup.already_have_account')}</span>{" "}
               <Link href="/login" className="font-extrabold text-violet-600 hover:text-violet-700 underline-offset-4 hover:underline">
-                Inicia sesión
+                {t('signup.login_here')}
               </Link>
             </div>
           </form>

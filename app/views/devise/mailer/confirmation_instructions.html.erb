@@ -1,0 +1,18 @@
+<h1><%= t('.greeting') %></h1>
+
+<p><%= t('.hello', name: @resource.name.present? ? @resource.name : @email) %></p>
+
+<p><%= t('.thank_you') %></p>
+
+<p><%= t('.instruction') %></p>
+
+<div style="text-align: center; margin: 40px 0;">
+  <%= link_to t('.action'), "http://localhost:3001/confirmation?confirmation_token=#{@token}", class: "button" %>
+</div>
+
+<p><%= t('.fallback') %></p>
+<p style="font-size: 14px; color: #6b7280; word-break: break-all;">
+  http://localhost:3001/confirmation?confirmation_token=<%= @token %>
+</p>
+
+<p><%= t('.ignore') %></p>
