@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
 import { Loader2, Command } from "lucide-react";
 
 import { useTranslations } from "@/hooks/use-translations";
@@ -32,10 +31,7 @@ export default function LoginPage() {
     const result = await handleLogin({ email, password });
 
     if (result.success) {
-      toast.success(t('login.success_message'));
       router.push("/dashboard");
-    } else {
-      toast.error(result.message);
     }
     
     setIsLoading(false);
@@ -132,8 +128,8 @@ export default function LoginPage() {
 
             <Button 
               type="submit" 
-              className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold text-lg rounded-xl shadow-[0_8px_30px_rgb(139,92,246,0.3)] transition-all active:scale-[0.98] mt-4"
-              disabled={isLoading}
+              className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold text-lg rounded-xl shadow-[0_8px_30px_rgb(139,92,246,0.3)] transition-all active:scale-[0.98] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isLoading || !email.trim() || !password.trim()}
             >
               {isLoading ? (
                 <>

@@ -8,8 +8,14 @@ Rails.application.routes.draw do
   },
   controllers: {
     sessions: 'users/sessions',
-    registrations: 'users/registrations'
+    registrations: 'users/registrations',
+    passwords: 'users/passwords'
   }
+
+  namespace :users do
+    resource :profile, only: [:show, :update]
+    resource :billing_info, only: [:show, :update]
+  end
 
 
   resources :locales, only: [:show], constraints: { id: /en|es/ }

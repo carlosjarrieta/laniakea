@@ -69,6 +69,54 @@ en:
     login_here: "Login here"
     sidebar_title: "Join the Supercluster"
     sidebar_desc: "Start orchestrating your ad campaigns with the power of the Laniakea supercluster."
+  sidebar:
+    dashboard: "Dashboard"
+    campaigns: "Campaigns"
+    analytics: "Analytics"
+    creatives: "Creatives"
+    clients: "Clients"
+    documents: "Documents"
+    settings: "Settings"
+    help: "Help"
+    logout: "Logout"
+    main_menu: "Main Menu"
+    support: "Support"
+  common:
+    back_to_login: "Back to login"
+    back_to_dashboard: "Back to Dashboard"
+  password:
+    forgot_title: "Forgot your password?"
+    forgot_subtitle: "Don't worry, we'll send you instructions to recover it."
+    send_reset_link: "Send reset link"
+    instructions_sent: "Instructions sent"
+    check_email_loop_instructions: "We've sent a link to your email. Check it to continue."
+    try_another_email: "Try another email"
+    reset_title: "Reset password"
+    reset_subtitle: "Enter your new password to access Laniakea."
+    update_password: "Update password"
+  settings:
+    title: "Settings"
+    subtitle: "Manage your account, preferences, and billing."
+    menu:
+      profile: "Profile"
+      billing: "Billing"
+      security: "Security"
+      notifications: "Notifications"
+    profile:
+      personal_info: "Personal Information"
+      preferences: "Preferences"
+      save_changes: "Save Changes"
+    billing:
+      billing_info: "Billing Information"
+      managed_by_laniakea: "Managed by Laniakea"
+      tax_id: "Tax ID / SSN / EIN"
+      company_name: "Company Name"
+      address: "Address"
+      city: "City"
+      zip_code: "Zip Code"
+      country: "Country"
+    security:
+      account_protected: "Account Protected"
   mailer:
     layout:
       title: "Laniakea"

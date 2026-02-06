@@ -20,6 +20,10 @@ es:
       logged_in: "Sesión iniciada exitosamente."
       logged_out: "Sesión cerrada exitosamente."
       session_not_found: "No se encontró una sesión activa."
+    profiles:
+      updated: "Perfil actualizado exitosamente."
+    billing_infos:
+      updated: "Información de facturación actualizada exitosamente."
 
   devise:
     mailer:

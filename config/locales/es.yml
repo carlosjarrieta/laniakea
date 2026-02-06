@@ -40,6 +40,54 @@ es:
     login_here: "Inicia sesión"
     sidebar_title: "Únete al Cúmulo"
     sidebar_desc: "Comienza a orquestar tus campañas publicitarias con el poder del supercúmulo de Laniakea."
+  sidebar:
+    dashboard: "Dashboard"
+    campaigns: "Campañas"
+    analytics: "Analíticas"
+    creatives: "Creativos"
+    clients: "Clientes"
+    documents: "Documentos"
+    settings: "Configuración"
+    help: "Ayuda"
+    logout: "Cerrar Sesión"
+    main_menu: "Menú Principal"
+    support: "Soporte"
+  common:
+    back_to_login: "Volver al inicio de sesión"
+    back_to_dashboard: "Volver al Dashboard"
+  password:
+    forgot_title: "¿Olvidaste tu contraseña?"
+    forgot_subtitle: "No te preocupes, te enviaremos instrucciones para recuperarla."
+    send_reset_link: "Enviar enlace de recuperación"
+    instructions_sent: "Instrucciones enviadas"
+    check_email_loop_instructions: "Hemos enviado un enlace a tu correo. Revísalo para continuar."
+    try_another_email: "Probar con otro correo"
+    reset_title: "Restablecer contraseña"
+    reset_subtitle: "Ingresa tu nueva contraseña para acceder a Laniakea."
+    update_password: "Actualizar contraseña"
+  settings:
+    title: "Configuración"
+    subtitle: "Gestiona tu cuenta, preferencias y facturación."
+    menu:
+      profile: "Perfil"
+      billing: "Facturación"
+      security: "Seguridad"
+      notifications: "Notificaciones"
+    profile:
+      personal_info: "Información Personal"
+      preferences: "Preferencias"
+      save_changes: "Guardar Cambios"
+    billing:
+      billing_info: "Información de Facturación"
+      managed_by_laniakea: "Gestionado por Laniakea"
+      tax_id: "ID Fiscal / RUT / RFC"
+      company_name: "Nombre de la Empresa"
+      address: "Dirección"
+      city: "Ciudad"
+      zip_code: "Código Postal"
+      country: "País"
+    security:
+      account_protected: "Cuenta Protegida"
   mailer:
     layout:
       title: "Laniakea"

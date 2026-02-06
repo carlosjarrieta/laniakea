@@ -19,6 +19,10 @@ en:
       logged_in: "Logged in successfully."
       logged_out: "Logged out successfully."
       session_not_found: "Couldn't find an active session."
+    profiles:
+      updated: "Profile updated successfully."
+    billing_infos:
+      updated: "Billing information updated successfully."
 
   devise:
     mailer:

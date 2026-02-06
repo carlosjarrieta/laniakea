@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 const publicRoutes = ["/login", "/signup", "/terms", "/privacy"];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);

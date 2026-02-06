@@ -5,6 +5,7 @@ const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
   },
 });
 
@@ -12,7 +13,8 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
-    config.headers.Authorization = token;
+    // Si el token no tiene el prefijo Bearer, lo añadimos
+    config.headers.Authorization = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
   }
   return config;
 });
@@ -22,10 +24,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // SHIELD: Si el backend dice 401, limpiamos todo y pateamos al login
-      console.error('Sesión expirada detectada por el escudo de Laniakea.');
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
+      // Ignorar 401 en el login, eso es credenciales inválidas, no sesión expirada
+      if (error.config.url !== '/login' && !error.config.url?.endsWith('/login')) {
+         console.error('Sesión expirada detectada por el escudo de Laniakea.');
+         useAuthStore.getState().logout();
+         window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

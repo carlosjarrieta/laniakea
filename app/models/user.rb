@@ -7,6 +7,7 @@ class User < ApplicationRecord
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_one_attached :profile_image
+  has_one :billing_info, dependent: :destroy
 
   enum role: { advertiser: 0, superadmin: 1 }
 
@@ -14,6 +15,7 @@ class User < ApplicationRecord
 
   def set_default_role
     self.role ||= :advertiser
+    self.skip_confirmation! if Rails.env.development?
   end
 
   validates :timezone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
