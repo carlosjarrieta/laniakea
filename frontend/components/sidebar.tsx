@@ -29,24 +29,35 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSidebar } from "@/components/providers/sidebar-provider";
 import { 
   Avatar,
-  AvatarFallback,
   AvatarImage,
+  AvatarFallback,
 } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useTranslations } from "@/hooks/use-translations";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { handleLogout, user } = useAuth();
-  const { collapsed } = useSidebar();
+  const { collapsed, mobileOpen, setMobileOpen } = useSidebar();
+
+  const { t } = useTranslations();
 
   const menuGroups = [
     {
-      label: "Principal",
+      label: t('sidebar.main_menu'),
       items: [
-        { label: "Panel", icon: LayoutDashboard, href: "/dashboard" },
+        { label: t('sidebar.dashboard'), icon: LayoutDashboard, href: "/dashboard" },
       ]
     },
     {
-      label: "Operación",
+      label: "Operación", // These seem like dynamic modules, keeping as is for now or add keys if needed
       items: [
         { label: "Ventas", icon: ShoppingCart, href: "/sales" },
         { label: "Asistencia", icon: Users, href: "/attendance" },
@@ -61,7 +72,7 @@ export function Sidebar() {
         { label: "Almacenes", icon: Archive, href: "/warehouses" },
         { label: "Transferencias", icon: ArrowRightLeft, href: "/transfers" },
         { label: "Compras", icon: ShoppingBag, href: "/purchases" },
-        { label: "Clientes", icon: Users, href: "/clients" },
+        { label: "Clientes", icon: t('sidebar.clients'), href: "/clients" },
         { label: "Proveedores", icon: Truck, href: "/suppliers" },
       ]
     },
@@ -83,29 +94,50 @@ export function Sidebar() {
     }
   ];
 
-  return (
-    <aside 
-      className={cn(
-        "flex flex-col h-screen border-r bg-white dark:bg-zinc-950/50 transition-all duration-300 ease-in-out sticky top-0 left-0 z-30",
-        collapsed ? "w-[70px]" : "w-64"
-      )}
-    >
-      <div className={cn(
-        "h-16 flex items-center px-4 mb-2",
-        collapsed ? "justify-center" : "gap-3"
-      )}>
-        <div className="bg-primary p-2 rounded-lg text-primary-foreground shrink-0">
-          <Command size={18} />
-        </div>
-        {!collapsed && (
-          <div className="flex flex-col">
-            <span className="font-bold text-lg tracking-tight leading-none">KARI</span>
-            <span className="text-[10px] text-zinc-500 font-medium">Kali sucursal</span>
-          </div>
-        )}
-      </div>
+  // Close mobile sidebar when route changes
+  const handleLinkClick = () => {
+    if (mobileOpen) {
+      setMobileOpen(false);
+    }
+  };
 
-      <div className="flex-1 px-3 space-y-6 pt-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
+  return (
+    <>
+      {/* Mobile overlay backdrop */}
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+      
+      <aside 
+        className={cn(
+          // Base styles
+          "flex flex-col h-screen border-r bg-white dark:bg-zinc-950/50 transition-all duration-300 ease-in-out z-50",
+          // Mobile: hidden by default, shown as fixed overlay when mobileOpen
+          "fixed md:sticky top-0 left-0",
+          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          // Desktop: normal sidebar behavior
+          collapsed ? "w-[70px]" : "w-64"
+        )}
+      >
+        <div className={cn(
+          "h-16 flex items-center px-4 mb-2",
+          collapsed ? "justify-center" : "gap-3"
+        )}>
+          <div className="bg-primary p-2 rounded-lg text-primary-foreground shrink-0">
+            <Command size={18} />
+          </div>
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="font-bold text-lg tracking-tight leading-none">KARI</span>
+              <span className="text-[10px] text-zinc-500 font-medium">Kali sucursal</span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 px-3 space-y-6 pt-2 overflow-y-auto overflow-x-hidden custom-scrollbar">
         {menuGroups.map((group, index) => (
           <div key={index}>
             {!collapsed && (
@@ -118,6 +150,7 @@ export function Sidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  onClick={handleLinkClick}
                   title={collapsed ? item.label : undefined}
                   className={cn(
                     "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors group",
@@ -138,26 +171,64 @@ export function Sidebar() {
       </div>
 
       <div className="p-3 border-t mt-auto">
-        <div className={cn("flex items-center gap-3 p-2 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50", collapsed && "justify-center border-none bg-transparent p-0")}>
-           <Avatar className="h-9 w-9 border border-zinc-200 dark:border-zinc-800">
-              <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.email || 'admin'}`} />
-              <AvatarFallback>AD</AvatarFallback>
-            </Avatar>
-            
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                 <p className="text-sm font-semibold truncate text-zinc-900 dark:text-zinc-100">Admin User</p>
-                 <p className="text-xs text-zinc-500 truncate">{user?.email || 'user@admin.com'}</p>
-              </div>
-            )}
-
-            {!collapsed && (
-              <Button variant="ghost" size="icon" className="h-8 w-8 text-zinc-500 hover:text-red-500" onClick={handleLogout}>
-                <LogOut size={16} />
-              </Button>
-            )}
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className={cn(
+              "flex w-full items-center gap-3 p-2 rounded-xl transition-all hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none",
+              collapsed && "justify-center"
+            )}>
+               <Avatar className="h-9 w-9 border border-zinc-200 dark:border-zinc-800 shrink-0">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.email || 'admin'}`} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                    {user?.email?.substring(0, 2).toUpperCase() || 'AD'}
+                  </AvatarFallback>
+                </Avatar>
+                
+                {!collapsed && (
+                  <div className="flex-1 min-w-0 text-left">
+                     <p className="text-sm font-semibold truncate text-zinc-900 dark:text-zinc-100">
+                       {user?.name || 'Administrador'}
+                     </p>
+                     <p className="text-xs text-zinc-500 truncate">{user?.email || 'user@admin.com'}</p>
+                  </div>
+                )}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={collapsed ? "center" : "end"} side={collapsed ? "right" : "top"} className="w-56 rounded-xl p-2 mb-2">
+            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-zinc-500 uppercase tracking-wider">
+              Mi Cuenta
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="-mx-2 my-1" />
+            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
+              <Link href="/settings/profile" className="flex items-center">
+                <User size={16} className="mr-2 text-zinc-500" />
+                <span className="font-medium text-[13px]">Perfil</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
+              <Link href="/settings/security" className="flex items-center">
+                <Shield size={16} className="mr-2 text-zinc-500" />
+                <span className="font-medium text-[13px]">Seguridad</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
+              <Link href="/settings/billing" className="flex items-center">
+                <CreditCard size={16} className="mr-2 text-zinc-500" />
+                <span className="font-medium text-[13px]">Facturación</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="-mx-2 my-1" />
+            <DropdownMenuItem 
+              className="rounded-lg cursor-pointer py-2 focus:bg-red-50 text-red-600 dark:focus:bg-red-950/20" 
+              onClick={handleLogout}
+            >
+              <LogOut size={16} className="mr-2" />
+              <span className="font-bold text-[13px]">Cerrar sesión</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </aside>
+    </>
   );
 }

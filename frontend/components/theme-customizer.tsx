@@ -5,13 +5,12 @@ import { Check } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useThemeColor } from "@/components/providers/theme-color-provider"
 
 const themes = [
@@ -22,53 +21,52 @@ const themes = [
   { name: "Ámbar", value: "yellow", color: "bg-yellow-500" },
   { name: "Rosa", value: "rose", color: "bg-rose-600" },
   { name: "Naranja", value: "orange", color: "bg-orange-600" },
+  { name: "Rojo", value: "red", color: "bg-red-600" },
 ] as const
+
+import { useAuthStore } from "@/store/useAuthStore"
+import api from "@/lib/api"
+import { toast } from "sonner"
 
 export function ThemeCustomizer() {
   const { themeColor, setThemeColor } = useThemeColor()
+  const { user, updateUser } = useAuthStore()
+
+  const handleThemeChange = async (value: string) => {
+    // Optimistic update
+    setThemeColor(value as any)
+    
+    if (user) {
+      try {
+        const response = await api.patch('/users/profile', { 
+          user: { theme_color: value } 
+        })
+        if (response.data.user) {
+          updateUser(response.data.user)
+        }
+      } catch (error) {
+        console.error("Failed to persist theme preference:", error)
+        toast.error("Error al guardar preferencia de tema")
+      }
+    }
+  }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
-          className="h-10 w-full justify-start px-4 rounded-xl border-zinc-200 md:w-auto md:justify-center md:px-0 md:aspect-square"
-          aria-label="Customize theme"
-        >
-          <div className={cn("h-4 w-4 rounded-full", 
-            themes.find(t => t.value === themeColor)?.color || "bg-zinc-950"
-          )} />
-          <span className="ml-2 md:hidden">Tema</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
-        <DropdownMenuLabel className="text-xs font-bold text-zinc-500 uppercase tracking-wider px-2 py-1.5">
-          Color del tema
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator className="-mx-2 my-1" />
-        <div className="grid grid-cols-3 gap-1">
-          {themes.map((theme) => (
-            <Button
-              key={theme.value}
-              variant="ghost"
-              className={cn(
-                "group relative h-10 w-full justify-center rounded-lg border-2 border-transparent px-0 hover:bg-zinc-100 dark:hover:bg-zinc-800",
-                themeColor === theme.value && "border-primary/20 bg-zinc-50 dark:border-primary/50 dark:bg-zinc-900"
-              )}
-              onClick={() => setThemeColor(theme.value)}
-              title={theme.name}
-            >
-              <div className={cn("h-4 w-4 rounded-full", theme.color)} />
-              {themeColor === theme.value && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Check className="h-3 w-3 text-white mix-blend-difference" />
-                </div>
-              )}
-              <span className="sr-only">{theme.name}</span>
-            </Button>
-          ))}
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Select value={themeColor} onValueChange={handleThemeChange}>
+      <SelectTrigger className="w-[120px] h-10 rounded-xl border-zinc-200 bg-white/50 backdrop-blur-sm focus:ring-violet-500/20 transition-all font-medium text-zinc-700">
+        <SelectValue placeholder="Tema" />
+      </SelectTrigger>
+      <SelectContent className="rounded-xl border-zinc-200">
+        {themes.map((theme) => (
+          <SelectItem 
+            key={theme.value} 
+            value={theme.value}
+            className="rounded-lg focus:bg-zinc-100 py-2.5"
+          >
+            <span className="font-medium text-zinc-700">{theme.name}</span>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }

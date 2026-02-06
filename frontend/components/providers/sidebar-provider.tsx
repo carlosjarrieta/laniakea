@@ -5,6 +5,8 @@ import * as React from "react"
 interface SidebarContext {
   collapsed: boolean
   setCollapsed: (collapsed: boolean) => void
+  mobileOpen: boolean
+  setMobileOpen: (open: boolean) => void
 }
 
 const SidebarContext = React.createContext<SidebarContext | undefined>(undefined)
@@ -19,9 +21,10 @@ export function useSidebar() {
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = React.useState(false)
+  const [mobileOpen, setMobileOpen] = React.useState(false)
 
   return (
-    <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
+    <SidebarContext.Provider value={{ collapsed, setCollapsed, mobileOpen, setMobileOpen }}>
       <div className="flex min-h-screen w-full">
         {children}
       </div>

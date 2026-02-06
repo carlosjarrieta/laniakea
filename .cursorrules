@@ -45,4 +45,194 @@
 * Siempre crear custom hooks para la logica de negocio
 * Intentar que los componentes sean cortos y reutilizables
 
+## 📱 Mobile First (OBLIGATORIO)
+**CRÍTICO: SIEMPRE diseñar pensando primero en móvil.**
 
+### Principios de Diseño Responsive:
+1. **Mobile First**: Escribir CSS base para móvil, luego añadir breakpoints para pantallas más grandes.
+2. **Sidebar colapsable**: En móvil el sidebar debe estar oculto por defecto y accesible mediante un botón hamburguesa.
+3. **Contenido con max-width**: Los formularios y contenido principal NO deben ocupar todo el ancho disponible.
+4. **Breakpoints Tailwind**: Usar `sm:`, `md:`, `lg:`, `xl:` para adaptar layouts.
+
+### Ejemplo de Layout Responsive:
+```tsx
+// ✅ CORRECTO - Mobile first
+<div className="w-full max-w-2xl mx-auto px-4 md:px-0">
+  {/* Contenido centrado con max-width */}
+</div>
+
+// ❌ INCORRECTO - Ocupa todo el ancho
+<div className="w-full">
+  {/* Formulario que se estira en toda la pantalla */}
+</div>
+```
+
+### Reglas de Ancho de Contenido:
+- **Formularios settings/profile**: `max-w-2xl` (672px)
+- **Dashboard cards**: Grid responsive con `grid-cols-1 md:grid-cols-2 lg:grid-cols-4`
+- **Modales**: `max-w-lg` o `max-w-xl`
+
+## 📏 Tamaños de Componentes (OBLIGATORIO)
+**CRÍTICO: Usar componentes compactos estilo shadcn/ui, NO componentes grandes.**
+
+### Alturas Estándar:
+- **Inputs y Selects**: `h-8` o `h-9` (32-36px) - NUNCA usar `h-10`, `h-11` o `h-12`
+- **Botones pequeños**: `h-8` (32px) con `size="sm"` y `text-xs`
+- **Botones normales**: `h-9` (36px) con `text-sm`
+- **Iconos en botones**: `size={14}` a `size={16}` (compactos)
+
+### Estados de Foco (Inputs/Selects):
+**CRÍTICO: Focus rings deben ser SUTILES, no exagerados.**
+```tsx
+// ✅ CORRECTO - Focus ring sutil
+className="h-9 text-sm border-border/60 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50"
+
+// ❌ INCORRECTO - Focus ring exagerado
+className="h-9 focus-visible:ring-4 focus-visible:ring-primary"
+```
+
+### Bordes:
+- **Siempre sutiles**: `border-border/60` o `border-border/40`
+- **Al hacer focus**: `focus-visible:border-primary/50` (50% opacidad)
+- **Hover en inputs**: `hover:border-border` (opcional)
+
+### Espaciado:
+- **Formularios**: `space-y-3` o `space-y-4` (NUNCA `space-y-6` o `space-y-8`)
+- **Entre label e input**: `space-y-1.5` o `space-y-2`
+- **Cards**: `gap-3` o `gap-4` entre elementos
+- **Padding en Cards**: `p-4` o `p-6` (no exceder)
+
+### Tipografía Compacta:
+- **Labels**: `text-xs font-medium text-muted-foreground` (SIEMPRE muted)
+- **Input text**: `text-sm` (placeholder también)
+- **Títulos de Card**: `text-base font-medium` o `text-sm font-semibold`
+- **Descripciones**: `text-xs text-muted-foreground`
+- **Mensajes de error**: `text-xs text-destructive`
+
+### Ejemplo COMPLETO de Input Correcto:
+```tsx
+// ✅ CORRECTO - Exactamente como shadcn/ui
+<FormItem className="space-y-1.5">
+  <FormLabel className="text-xs font-medium text-muted-foreground">
+    Email
+  </FormLabel>
+  <FormControl>
+    <Input 
+      type="email"
+      placeholder="name@example.com"
+      className="h-9 text-sm border-border/60 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50" 
+    />
+  </FormControl>
+  <FormMessage className="text-xs" />
+</FormItem>
+
+// ❌ INCORRECTO - Demasiado alto y con bordes exagerados
+<FormItem>
+  <FormLabel>Email</FormLabel>
+  <Input 
+    className="h-11 rounded-xl shadow-lg focus:ring-4" 
+    placeholder="name@example.com"
+  />
+</FormItem>
+```
+
+### Ejemplo de Select Correcto:
+```tsx
+// ✅ CORRECTO - Compacto
+<Select>
+  <SelectTrigger className="h-9 text-sm border-border/60">
+    <SelectValue placeholder="Select option" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="1">Option 1</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+### Ejemplo de Botón Correcto:
+```tsx
+// ✅ CORRECTO - Botón compacto con icono
+<Button size="sm" className="h-8 px-3 text-xs font-medium gap-1.5">
+  <Save size={14} />
+  Save Changes
+</Button>
+
+// ❌ INCORRECTO - Botón grande
+<Button className="h-11 px-8 rounded-xl shadow-lg gap-2">
+  <Save size={20} />
+  Save Changes
+</Button>
+```
+
+## 🎨 Consistencia Visual y Tematización
+**CRÍTICO: Todos los elementos de UI deben usar variables de color dinámicas, NUNCA colores fijos.**
+
+### Colores de Botones y Componentes
+- ❌ **NUNCA usar**: `bg-violet-600`, `bg-blue-500`, `text-green-600`, etc.
+- ✅ **SIEMPRE usar**: `bg-primary`, `text-primary`, `bg-secondary`, `bg-destructive`, etc.
+
+### Ejemplos Correctos:
+```tsx
+// ✅ CORRECTO - El botón cambiará según el tema seleccionado
+<Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+  Guardar
+</Button>
+
+// ❌ INCORRECTO - El botón siempre será violeta sin importar el tema
+<Button className="bg-violet-600 hover:bg-violet-700 text-white">
+  Guardar
+</Button>
+```
+
+### Variables CSS Disponibles:
+- `--background` / `--foreground` - Fondo y texto principal
+- `--primary` / `--primary-foreground` - Color de acento principal
+- `--secondary` / `--secondary-foreground` - Color secundario
+- `--muted` / `--muted-foreground` - Elementos atenuados
+- `--accent` / `--accent-foreground` - Acentos
+- `--destructive` / `--destructive-foreground` - Acciones destructivas
+- `--border`, `--input`, `--ring` - Bordes y focus
+
+### Archivos de Temas:
+- Los temas se definen en `frontend/app/themes/*.css`
+- El tema base es `zinc.css` (variables en `:root`)
+- Los temas de color usan clases como `.theme-blue`, `.theme-green`, etc.
+- El `ThemeColorProvider` aplica la clase al `<body>` automáticamente
+
+## 🌐 Traducciones (i18n)
+**OBLIGATORIO: Nunca hardcodear textos en componentes.**
+
+### Reglas de Traducción:
+1. Todo texto visible al usuario DEBE usar el hook `useTranslations()`
+2. Las claves se definen en `config/locales/es.yml` y `config/locales/en.yml`
+3. El backend sirve traducciones vía `/locales/:locale`
+
+### Ejemplo de Uso:
+```tsx
+const { t } = useTranslations(currentLocale);
+
+// ✅ CORRECTO
+<FormLabel>{t('settings.profile.theme_color')}</FormLabel>
+
+// ❌ INCORRECTO
+<FormLabel>Color del tema</FormLabel>
+```
+
+### Workflow de Traducciones:
+1. Añadir la clave en `es.yml` con el texto en español
+2. Añadir la misma clave en `en.yml` con el texto en inglés
+3. Usar `t('clave.anidada')` en el componente
+4. Verificar que ambos idiomas funcionan antes de hacer commit
+
+## 📁 Estructura de Archivos de Tema
+```
+frontend/app/themes/
+├── zinc.css      # Tema base (default)
+├── blue.css      # Tema azul
+├── green.css     # Tema verde
+├── violet.css    # Tema violeta
+├── rose.css      # Tema rosa
+├── orange.css    # Tema naranja
+├── yellow.css    # Tema ámbar
+└── red.css       # Tema rojo
+```

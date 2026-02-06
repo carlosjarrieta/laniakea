@@ -63,7 +63,7 @@ const recentSales = [
 
 export default function DashboardPage() {
   return (
-    <div className="p-6 space-y-6 max-w-[1600px] mx-auto min-h-screen bg-transparent">
+    <div className="space-y-6 min-h-screen bg-transparent">
       
       <div className="flex items-center justify-between">
          <h2 className="text-2xl font-bold tracking-tight">Hola, bienvenido de nuevo 👋</h2>

@@ -3,7 +3,7 @@ class User < ApplicationRecord
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
-         :confirmable, :lockable, :trackable,
+         :confirmable, :lockable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
   has_one_attached :profile_image
@@ -21,3 +21,4 @@ class User < ApplicationRecord
   validates :timezone, inclusion: { in: ActiveSupport::TimeZone.all.map(&:name) }
   validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }
 end
+

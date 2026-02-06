@@ -40,42 +40,45 @@ export default function SettingsLayout({
     ];
 
     return (
-        <div className="p-8 space-y-8">
+        <div className="space-y-6">
+            {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-1">
+                <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mb-0.5">
                     {t('settings.title')}
                 </h1>
-                <p className="text-zinc-500">
+                <p className="text-xs md:text-sm text-muted-foreground">
                     {t('settings.subtitle')}
                 </p>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-8">
-                {/* Sidebar Menu */}
-                <aside className="w-full md:w-64 space-y-1">
-                    {menuItems.map((item) => {
-                        const isActive = pathname === item.href;
-                        const Icon = item.icon;
-                        return (
-                            <Link
-                                key={item.href}
-                                href={item.href}
-                                className={cn(
-                                    "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                                    isActive
-                                        ? "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400"
-                                        : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-                                )}
-                            >
-                                <Icon size={18} />
-                                {item.title}
-                            </Link>
-                        );
-                    })}
+            <div className="flex flex-col md:flex-row gap-6">
+                {/* Sidebar Menu - horizontal scroll on mobile, vertical on desktop */}
+                <aside className="w-full md:w-48 shrink-0">
+                    <div className="flex md:flex-col gap-1 overflow-x-auto pb-2 md:pb-0">
+                        {menuItems.map((item) => {
+                            const isActive = pathname === item.href;
+                            const Icon = item.icon;
+                            return (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className={cn(
+                                        "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap",
+                                        isActive
+                                            ? "bg-primary/10 text-primary dark:bg-primary/20"
+                                            : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                                    )}
+                                >
+                                    <Icon size={16} />
+                                    {item.title}
+                                </Link>
+                            );
+                        })}
+                    </div>
                 </aside>
 
                 {/* Main Content */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                     {children}
                 </div>
             </div>

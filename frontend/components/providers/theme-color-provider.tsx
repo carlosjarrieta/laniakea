@@ -24,20 +24,23 @@ export const useThemeColor = create<ThemeColorState>()(
   )
 )
 
-export function ThemeColorProvider({ children }: { children: React.ReactNode }) {
-  const themeColor = useThemeColor((state) => state.themeColor)
+import { useAuthStore } from "@/store/useAuthStore"
 
-  // Apply data-theme attribute to body for CSS selector targeting if needed
-  // But for Tailwind classes, we might need a simpler approach or a wrapper.
-  // Actually, shadcn usually handles this via CSS variables in global.css
-  // specific to each theme. We will implement these classes in globals.css shortly.
-  
+export function ThemeColorProvider({ children }: { children: React.ReactNode }) {
+  const { themeColor, setThemeColor } = useThemeColor()
+  const user = useAuthStore((state) => state.user)
+
+  // Sync with user preferences from backend when user object changes
+  React.useEffect(() => {
+    if (user?.theme_color && user.theme_color !== themeColor) {
+      setThemeColor(user.theme_color as ThemeColor)
+    }
+  }, [user?.theme_color])
+
   React.useEffect(() => {
     const body = document.body
-    // Remove all previous theme color classes
     const themes = ["theme-zinc", "theme-slate", "theme-stone", "theme-gray", "theme-neutral", "theme-red", "theme-rose", "theme-orange", "theme-green", "theme-blue", "theme-yellow", "theme-violet"]
     body.classList.remove(...themes)
-    // Add new theme color class
     body.classList.add(`theme-${themeColor}`)
   }, [themeColor])
 

@@ -8,6 +8,7 @@ interface User {
   role: 'advertiser' | 'superadmin';
   timezone: string;
   locale: string;
+  theme_color?: string;
 }
 
 interface AuthState {
