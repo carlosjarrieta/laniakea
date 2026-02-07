@@ -3,14 +3,16 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   ArrowUpRight,
   ArrowDownRight
 } from "lucide-react";
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
+import { Plus, Rocket as RocketIcon } from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
   AreaChart,
   Area,
   Tooltip,
@@ -65,8 +67,15 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 min-h-screen bg-transparent">
       
-      <div className="flex items-center justify-between">
-         <h2 className="text-2xl font-bold tracking-tight">Hola, bienvenido de nuevo 👋</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">Hola, bienvenido de nuevo 👋</h2>
+          <p className="text-xs md:text-sm text-muted-foreground">Aquí tienes un resumen de tus campañas de hoy.</p>
+        </div>
+        <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4 text-xs font-semibold gap-2 shadow-sm shrink-0">
+          <RocketIcon size={14} strokeWidth={2.5} />
+          Nueva Campaña
+        </Button>
       </div>
 
       {/* KPI Section */}
@@ -77,19 +86,19 @@ export default function DashboardPage() {
           { title: "Cuentas activas", value: "45,678", trend: "+12.5%", trendUp: true, desc: "Fuerte retención de usuarios", sub: "El compromiso supera los objetivos" },
           { title: "Tasa de crecimiento", value: "4.5%", trend: "+4.5%", trendUp: true, desc: "Incremento de desempeño constante", sub: "Cumple con las proyecciones de crecimiento" }
         ].map((kpi, i) => (
-          <Card key={i} className="shadow-sm border-zinc-200 dark:border-zinc-800 rounded-xl bg-card">
-            <CardContent className="p-6">
+          <Card key={i} className="shadow-sm border-border/40 rounded-xl bg-card/50">
+            <CardContent className="p-4 md:p-6">
               <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-zinc-500">{kpi.title}</span>
-                <span className={cn("text-xs font-bold flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-full", kpi.trendUp ? "text-emerald-600" : "text-rose-600")}>
+                <span className="text-sm font-medium text-muted-foreground">{kpi.title}</span>
+                <span className={cn("text-xs font-bold flex items-center gap-1 bg-muted/50 px-2 py-0.5 rounded-full", kpi.trendUp ? "text-emerald-600" : "text-rose-600")}>
                   {kpi.trendUp ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} {kpi.trend}
                 </span>
               </div>
               <div className="text-3xl font-bold mb-1">{kpi.value}</div>
               <p className="text-sm font-medium mt-4 flex items-center gap-1">
-                 {kpi.desc} {kpi.trendUp ? <ArrowUpRight size={14} className="text-zinc-400" /> : <ArrowDownRight size={14} className="text-zinc-400" />}
+                 {kpi.desc} {kpi.trendUp ? <ArrowUpRight size={14} className="text-muted-foreground/70" /> : <ArrowDownRight size={14} className="text-muted-foreground/70" />}
               </p>
-              <p className="text-xs text-zinc-400 mt-1">{kpi.sub}</p>
+              <p className="text-xs text-muted-foreground/70 mt-1">{kpi.sub}</p>
             </CardContent>
           </Card>
         ))}
@@ -98,20 +107,20 @@ export default function DashboardPage() {
       {/* Grid: 2 columns (Chart 70% | List 30%) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Bar Chart */}
-        <Card className="lg:col-span-2 shadow-sm border-zinc-200 dark:border-zinc-800 rounded-xl bg-card">
-          <CardContent className="p-6">
+        <Card className="lg:col-span-2 shadow-sm border-border/40 rounded-xl bg-card/50">
+          <CardContent className="p-4 md:p-6">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Gráfica de barras - Interactiva</h3>
-                <p className="text-xs text-zinc-500">Total de los últimos 3 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de barras - Interactiva</h3>
+                <p className="text-xs text-muted-foreground">Total de los últimos 3 meses</p>
               </div>
-              <div className="flex bg-zinc-50 dark:bg-zinc-900 rounded-lg p-1 border border-zinc-100 dark:border-zinc-800">
-                <div className="bg-white dark:bg-zinc-800 shadow-sm rounded-md px-4 py-2 text-right border border-zinc-100 dark:border-zinc-700">
-                  <span className="text-[10px] text-zinc-400 block uppercase tracking-wider">Escritorio</span>
+              <div className="flex bg-muted/30 rounded-lg p-1 border border-border/40">
+                <div className="bg-white dark:bg-zinc-800 shadow-sm rounded-md px-4 py-2 text-right border border-border/20">
+                  <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">Escritorio</span>
                   <span className="text-lg font-bold">24,828</span>
                 </div>
                 <div className="px-4 py-2 text-right opacity-50">
-                   <span className="text-[10px] text-zinc-400 block uppercase tracking-wider">Móvil</span>
+                   <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">Móvil</span>
                    <span className="text-lg font-bold">25,010</span>
                 </div>
               </div>
@@ -129,7 +138,7 @@ export default function DashboardPage() {
                   />
                   <Tooltip 
                     cursor={{fill: 'var(--primary)', opacity: 0.1}}
-                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', backgroundColor: 'hsl(var(--card))', color: 'hsl(var(--foreground))' }}
                   />
                   <Bar 
                     dataKey="value" 
@@ -144,10 +153,10 @@ export default function DashboardPage() {
         </Card>
 
         {/* Recent Sales List */}
-        <Card className="shadow-sm border-zinc-200 dark:border-zinc-800 rounded-xl bg-card">
-          <CardContent className="p-6">
-            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Ventas recientes</h3>
-            <p className="text-xs text-zinc-500 mb-6">Realizaste 265 ventas este mes</p>
+        <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+          <CardContent className="p-4 md:p-6">
+            <h3 className="text-sm font-semibold text-foreground mb-1">Ventas recientes</h3>
+            <p className="text-xs text-muted-foreground mb-6">Realizaste 265 ventas este mes</p>
             <div className="space-y-6">
               {recentSales.map((sale, i) => (
                 <div key={i} className="flex items-center justify-between">
@@ -158,7 +167,7 @@ export default function DashboardPage() {
                     </Avatar>
                     <div>
                       <p className="text-sm font-medium leading-none">{sale.name}</p>
-                      <p className="text-xs text-zinc-500 mt-1">{sale.email}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{sale.email}</p>
                     </div>
                   </div>
                   <div className="font-bold text-sm">{sale.amount}</div>
@@ -172,11 +181,11 @@ export default function DashboardPage() {
       {/* Bottom Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
          {/* Area Chart */}
-         <Card className="lg:col-span-2 shadow-sm border-zinc-200 dark:border-zinc-800 rounded-xl bg-card">
-          <CardContent className="p-6">
+         <Card className="lg:col-span-2 shadow-sm border-border/40 rounded-xl bg-card/50">
+          <CardContent className="p-4 md:p-6">
              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Gráfica de áreas - apilada</h3>
-                <p className="text-xs text-zinc-500">Muestra visitantes totales de los últimos 6 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de áreas - apilada</h3>
+                <p className="text-xs text-muted-foreground">Muestra visitantes totales de los últimos 6 meses</p>
              </div>
              <div className="h-[250px] w-full">
                <ResponsiveContainer width="100%" height="100%">
@@ -206,7 +215,7 @@ export default function DashboardPage() {
                  </AreaChart>
                </ResponsiveContainer>
              </div>
-             <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs text-zinc-500">
+             <div className="mt-4 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                    <span>En aumento 5.2% este mes</span>
                    <ArrowUpRight size={12} className="text-emerald-500" />
@@ -217,17 +226,17 @@ export default function DashboardPage() {
          </Card>
 
          {/* Pie Chart (Donut) */}
-         <Card className="shadow-sm border-zinc-200 dark:border-zinc-800 rounded-xl bg-card">
-          <CardContent className="p-6 h-full flex flex-col">
+         <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+          <CardContent className="p-4 md:p-6 h-full flex flex-col">
              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 mb-1">Gráfica de pastel - dona con texto</h3>
-                <p className="text-xs text-zinc-500">Visitantes totales por navegador de los últimos 6 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de pastel - dona con texto</h3>
+                <p className="text-xs text-muted-foreground">Visitantes totales por navegador de los últimos 6 meses</p>
              </div>
              
              <div className="flex-1 flex items-center justify-center relative">
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                    <span className="text-3xl font-bold tracking-tighter">1,125</span>
-                   <span className="text-[10px] text-zinc-500 uppercase tracking-wide">Visitantes</span>
+                   <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Visitantes</span>
                 </div>
                 <div className="h-[200px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -252,11 +261,11 @@ export default function DashboardPage() {
              </div>
 
              <div className="mt-auto pt-4 text-center">
-                <div className="flex items-center justify-center gap-1 text-xs text-zinc-500 mb-1">
-                   Chrome lidera con <span className="font-bold text-zinc-900 dark:text-zinc-100">24.4%</span>
+                <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
+                   Chrome lidera con <span className="font-bold text-foreground">24.4%</span>
                    <ArrowUpRight size={12} className="text-emerald-500" />
                 </div>
-                <div className="text-[10px] text-zinc-400">
+                <div className="text-[10px] text-muted-foreground/70">
                    Basado en datos de enero a junio de 2024
                 </div>
              </div>

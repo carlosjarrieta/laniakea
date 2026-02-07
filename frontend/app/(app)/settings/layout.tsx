@@ -43,7 +43,7 @@ export default function SettingsLayout({
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mb-0.5">
+                <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-foreground mb-0.5">
                     {t('settings.title')}
                 </h1>
                 <p className="text-xs md:text-sm text-muted-foreground">
@@ -66,7 +66,7 @@ export default function SettingsLayout({
                                         "flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap",
                                         isActive
                                             ? "bg-primary/10 text-primary dark:bg-primary/20"
-                                            : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                                            : "text-muted-foreground hover:bg-muted/60"
                                     )}
                                 >
                                     <Icon size={16} />

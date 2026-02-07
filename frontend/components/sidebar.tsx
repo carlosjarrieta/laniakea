@@ -19,10 +19,10 @@ import {
   Shield,
   Building2,
   LogOut,
-  Command,
   User,
   Box,
-  Wallet
+  Wallet,
+  Rocket
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -126,13 +126,13 @@ export function Sidebar() {
           "h-16 flex items-center px-4 mb-2",
           collapsed ? "justify-center" : "gap-3"
         )}>
-          <div className="bg-primary p-2 rounded-lg text-primary-foreground shrink-0">
-            <Command size={18} />
+          <div className="flex items-center justify-center w-10 h-10 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg shrink-0">
+            <Rocket className="w-6 h-6" strokeWidth={2.5} />
           </div>
           {!collapsed && (
-            <div className="flex flex-col">
-              <span className="font-bold text-lg tracking-tight leading-none">KARI</span>
-              <span className="text-[10px] text-zinc-500 font-medium">Kali sucursal</span>
+            <div className="flex flex-col justify-center">
+              <span className="text-lg font-extrabold tracking-tight text-violet-700 dark:text-violet-400 leading-none">LANIAKEA</span>
+              <span className="text-[9px] text-muted-foreground font-medium tracking-widest uppercase leading-tight mt-0.5">Social Media Manager</span>
             </div>
           )}
         </div>
