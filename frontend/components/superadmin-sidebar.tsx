@@ -53,6 +53,7 @@ export function SuperadminSidebar() {
         { label: t('sidebar.dashboard'), icon: LayoutDashboard, href: "/dashboard" },
         { label: t('superadmin.sidebar.accounts'), icon: Building2, href: "/superadmin/accounts" },
         { label: t('superadmin.sidebar.plans'), icon: Package, href: "/superadmin/plans" },
+        { label: t('superadmin.sidebar.payments'), icon: CreditCard, href: "/superadmin/payments" },
       ]
     },
     {

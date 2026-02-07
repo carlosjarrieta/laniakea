@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  stripe_payment_intent_id: MyString
+  stripe_invoice_id: MyString
+  amount_cents: 1
+  currency: MyString
+  status: MyString
+  payment_date: 2026-02-07 09:49:55
+  metadata: 
+
+two:
+  account: two
+  stripe_payment_intent_id: MyString
+  stripe_invoice_id: MyString
+  amount_cents: 1
+  currency: MyString
+  status: MyString
+  payment_date: 2026-02-07 09:49:55
+  metadata: 

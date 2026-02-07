@@ -13,6 +13,7 @@ gem "rack-cors"
 gem "aws-sdk-s3", "~> 1.213"
 gem "countries"
 gem "stripe"
+gem "jbuilder"
 
 # Background Jobs
 gem "sidekiq", "~> 8.1"

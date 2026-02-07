@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_07_075957) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_144955) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -86,6 +86,22 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_07_075957) do
     t.index ["user_id"], name: "index_memberships_on_user_id"
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.string "stripe_payment_intent_id"
+    t.string "stripe_invoice_id"
+    t.integer "amount_cents"
+    t.string "currency"
+    t.string "status"
+    t.datetime "payment_date"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_payments_on_account_id"
+    t.index ["stripe_invoice_id"], name: "index_payments_on_stripe_invoice_id"
+    t.index ["stripe_payment_intent_id"], name: "index_payments_on_stripe_payment_intent_id"
+  end
+
   create_table "plans", force: :cascade do |t|
     t.string "name", null: false
     t.integer "price_cents", default: 0, null: false
@@ -141,4 +157,5 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_07_075957) do
   add_foreign_key "invitations", "accounts"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"
+  add_foreign_key "payments", "accounts"
 end

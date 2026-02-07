@@ -55,12 +55,24 @@ export const useAuth = () => {
       });
       
       const message = response.data.status.message;
-      toast.success(message);
-      
-      // If we signed up with an invitation, we should probably follow the login flow 
-      // but Rails registrations usually don't return the token unless configured.
-      // For now, redirect to login as before, but with the email pre-filled if possible.
-      router.push(`/login?email=${encodeURIComponent(userParams.email)}`);
+      const token = response.headers.authorization;
+      const userDataResponse = response.data.data;
+
+      if (token && userDataResponse) {
+        login(userDataResponse, token);
+        toast.success(message);
+        
+        if (!userDataResponse.has_account) {
+          router.push("/onboarding/account");
+        } else if (!userDataResponse.has_active_plan) {
+          router.push("/plans");
+        } else {
+          router.push("/dashboard");
+        }
+      } else {
+        toast.success(message);
+        router.push(`/login?email=${encodeURIComponent(userParams.email)}`);
+      }
       
       return { 
         success: true, 

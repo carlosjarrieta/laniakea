@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import api from "@/lib/api";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Country {
   name: string;
@@ -20,6 +22,8 @@ interface Country {
 export default function AccountOnboardingPage() {
   const router = useRouter();
   const { updateUser } = useAuth();
+  const { locale } = useLanguage();
+  const { t, isLoading: translationsLoading } = useTranslations(locale);
   const [countries, setCountries] = useState<Country[]>([]);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -51,7 +55,7 @@ export default function AccountOnboardingPage() {
     setLoading(true);
     try {
       const response = await api.post("/accounts", { account: formData });
-      toast.success("¡Organización inicializada con éxito!");
+      toast.success(t('onboarding.success'));
       
       updateUser({ has_account: true });
       router.push("/plans");
@@ -73,6 +77,8 @@ export default function AccountOnboardingPage() {
 
   const isFormValid = formData.name && formData.billing_email && formData.country_code && formData.tax_id && formData.address && formData.city;
 
+  if (translationsLoading) return null;
+
   return (
     <div className="relative flex flex-col items-center justify-center min-h-[calc(100vh-120px)] p-4 overflow-hidden">
       {/* Decorative Background Elements */}
@@ -90,10 +96,10 @@ export default function AccountOnboardingPage() {
           </div>
           <div className="space-y-2">
             <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-zinc-900 dark:text-white leading-tight">
-              Initialize Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">Organization</span>
+              {t('onboarding.title').split(' ')[0]} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/60">{t('onboarding.title').split(' ').slice(1).join(' ')}</span>
             </h1>
             <p className="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-medium max-w-lg mx-auto leading-relaxed">
-              Define your workspace parameters and fiscal details before we start orchestrating your content.
+              {t('onboarding.subtitle')}
             </p>
           </div>
         </div>
@@ -103,10 +109,10 @@ export default function AccountOnboardingPage() {
           <CardHeader className="p-8 md:p-12 bg-zinc-50/30 dark:bg-zinc-800/20 border-b border-zinc-100 dark:border-zinc-800">
             <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-3">
               <Stars size={24} className="text-primary" />
-              Organization Blueprint
+              {t('onboarding.blueprint')}
             </CardTitle>
             <CardDescription className="text-zinc-500 dark:text-zinc-400 font-bold text-base">
-              Set your identity and <span className="text-primary">billing coordinates</span> (required for invoices).
+              {t('onboarding.blueprint_desc')}
             </CardDescription>
           </CardHeader>
           
@@ -114,12 +120,12 @@ export default function AccountOnboardingPage() {
             {/* Account Type Selector */}
             <div className="space-y-4">
               <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                Workspace Type
+                {t('onboarding.workspace_type')}
               </label>
               <div className="grid grid-cols-2 gap-6">
                 {[
-                  { id: 'individual', label: 'Individual', icon: User },
-                  { id: 'company', label: 'Company', icon: Building }
+                  { id: 'individual', label: t('settings.team.roles.member'), icon: User },
+                  { id: 'company', label: t('settings.team.roles.owner'), icon: Building }
                 ].map((item) => (
                   <button 
                     key={item.id}
@@ -150,7 +156,7 @@ export default function AccountOnboardingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-3">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                  Entity Name / Razón Social
+                  {t('onboarding.company_name')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -167,7 +173,7 @@ export default function AccountOnboardingPage() {
 
               <div className="space-y-3">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                   Tax ID / RUT / RFC
+                   {t('onboarding.tax_id')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -184,7 +190,7 @@ export default function AccountOnboardingPage() {
 
               <div className="space-y-3">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                   Billing Email
+                   {t('onboarding.billing_email')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -202,7 +208,7 @@ export default function AccountOnboardingPage() {
 
               <div className="space-y-3">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                   Phone Coordinate
+                   {t('onboarding.phone')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -219,7 +225,7 @@ export default function AccountOnboardingPage() {
 
               <div className="space-y-3 md:col-span-2">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                   Physical Address
+                   {t('onboarding.address')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -236,7 +242,7 @@ export default function AccountOnboardingPage() {
 
               <div className="space-y-3">
                 <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                   Region
+                   {t('onboarding.region')}
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
@@ -260,7 +266,7 @@ export default function AccountOnboardingPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-3">
                   <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                    City Hub
+                    {t('onboarding.city')}
                   </label>
                   <Input 
                     placeholder="Santiago"
@@ -271,7 +277,7 @@ export default function AccountOnboardingPage() {
                 </div>
                 <div className="space-y-3">
                   <label className="text-xs font-black text-zinc-400 dark:text-zinc-500 uppercase tracking-[0.2em] ml-1">
-                    Post Code
+                    {t('onboarding.postal_code')}
                   </label>
                   <Input 
                     placeholder="832000"
@@ -294,7 +300,7 @@ export default function AccountOnboardingPage() {
                   <Loader2 className="animate-spin h-6 w-6" />
                 ) : (
                   <div className="flex items-center gap-3">
-                    Initialize Workspace
+                    {t('onboarding.submit')}
                     <Check className="h-6 w-6 transition-transform group-hover:scale-110" strokeWidth={4} />
                   </div>
                 )}

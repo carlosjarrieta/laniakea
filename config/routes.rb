@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   namespace :superadmin do
     resources :plans
     resources :accounts, only: [:index, :show, :update]
+    resources :payments, only: [:index]
   end
 
   scope module: :onboarding do
@@ -44,6 +45,7 @@ Rails.application.routes.draw do
     end
   end
   get 'invitations/:token', to: 'memberships#show_invitation'
+  post 'invitations/:token/accept', to: 'memberships#accept'
   get 'onboarding/countries', to: 'onboarding#countries'
   post 'onboarding', to: 'onboarding#create'
   post 'webhooks/stripe', to: 'webhooks#stripe'

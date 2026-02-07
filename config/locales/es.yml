@@ -232,6 +232,35 @@ es:
         features: "Características"
       modals:
         mode_indicator: "Modo Superadmin"
+  onboarding:
+    title: "Inicializa tu Organización"
+    subtitle: "Define los parámetros de tu espacio de trabajo y detalles fiscales antes de empezar a orquestar tu contenido."
+    blueprint: "Plan de Organización"
+    blueprint_desc: "Establece tu identidad y coordenadas de facturación (requerido para facturas)."
+    workspace_type: "Tipo de Espacio"
+    company_name: "Nombre de la Entidad / Razón Social"
+    tax_id: "ID Fiscal / RUT / RFC"
+    billing_email: "Correo de Facturación"
+    phone: "Coordenada Telefónica"
+    address: "Dirección Física"
+    region: "Región"
+    city: "Centro Urbano"
+    postal_code: "Código Postal"
+    submit: "Inicializar Espacio de Trabajo"
+    success: "¡Organización inicializada con éxito!"
+  invitations:
+    page:
+      title: "¡Has sido invitado!"
+      subtitle: "Has sido invitado a unirte a %{account} como %{role}."
+      error_title: "Error"
+      error_invalid: "La invitación es inválida o ha expirado."
+      logged_in_as: "Sesión iniciada como"
+      wrong_account: "Esta invitación fue enviada a %{email}, pero has iniciado sesión como %{current_email}."
+      switch_account: "Cambiar de cuenta"
+      accept_button: "Aceptar Invitación"
+      login_button: "Iniciar Sesión"
+      signup_button: "Registrarse"
+      success: "¡Bienvenido al equipo!"
   mailer:
     layout:
       title: "Laniakea"

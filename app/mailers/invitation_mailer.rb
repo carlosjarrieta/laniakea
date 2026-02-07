@@ -3,7 +3,7 @@ class InvitationMailer < ApplicationMailer
     @invitation = invitation
     @account = invitation.account
     frontend_url = ENV['FRONTEND_URL'] || 'http://localhost:3001'
-    @url = "#{frontend_url}/signup?token=#{@invitation.token}"
+    @url = "#{frontend_url}/invitations/#{@invitation.token}"
     
     mail(to: @invitation.email, subject: "Has sido invitado a unirte a #{@account.name} en Laniakea")
   end

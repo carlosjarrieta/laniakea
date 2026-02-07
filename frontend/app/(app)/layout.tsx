@@ -27,17 +27,33 @@ function AppLayoutContent({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, refreshUser } = useAuth();
   const { locale, setLocale } = useLanguage();
   const { collapsed, setCollapsed, mobileOpen, setMobileOpen } = useSidebar();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      // router.push("/login");
+    if (isAuthenticated) {
+      refreshUser();
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const isSuperadmin = user?.role === 'superadmin';
+    if (isSuperadmin) return;
+
+    // Protection logic
+    if (!user?.has_account && pathname !== "/onboarding/account") {
+      router.push("/onboarding/account");
+    } else if (user?.has_account && !user?.has_active_plan && pathname !== "/plans") {
+      // If we are in onboarding, don't redirect to plans yet if we haven't finished account creation
+      // but here has_account is already true, so we should be on /plans
+      router.push("/plans");
+    }
+  }, [isAuthenticated, user, pathname, router]);
 
   const isSuperadmin = user?.role === 'superadmin';
 

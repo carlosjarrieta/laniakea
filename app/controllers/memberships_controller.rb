@@ -44,6 +44,26 @@ class MembershipsController < ApplicationController
     render json: { message: "Invitación cancelada con éxito." }
   end
 
+  def accept
+    invitation = Invitation.find_by!(token: params[:token])
+    
+    if current_user.membership.present?
+      return render json: { error: "Ya perteneces a una cuenta activa." }, status: :unprocessable_entity
+    end
+
+    ActiveRecord::Base.transaction do
+      Membership.create!(
+        user: current_user,
+        account: invitation.account,
+        role: invitation.role,
+        status: :active
+      )
+      invitation.update!(accepted_at: Time.current)
+    end
+
+    render json: { message: "Invitación aceptada con éxito." }
+  end
+
   def show_invitation
     invitation = Invitation.find_by!(token: params[:token])
     render json: {

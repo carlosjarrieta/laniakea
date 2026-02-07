@@ -58,8 +58,11 @@ class StripeService
     rescue JSON::ParserError
       return { status: 400, error: 'Invalid payload' }
     rescue Stripe::SignatureVerificationError
+      Rails.logger.error "⚠️ Stripe Webhook Error: Invalid signature"
       return { status: 400, error: 'Invalid signature' }
     end
+
+    Rails.logger.info "🔔 Stripe Webhook Received: #{event.type}"
 
     case event.type
     when 'checkout.session.completed'
@@ -68,6 +71,9 @@ class StripeService
     when 'customer.subscription.deleted', 'customer.subscription.updated'
       subscription = event.data.object
       handle_subscription_updated(subscription)
+    when 'invoice.payment_succeeded'
+      invoice = event.data.object
+      handle_payment_succeeded(invoice)
     end
 
     { status: 200 }
@@ -97,5 +103,70 @@ class StripeService
              end
 
     account.update!(status: status)
+  end
+
+  def self.handle_payment_succeeded(invoice)
+    Rails.logger.info "💰 Processing payment_succeeded for Customer: #{invoice.customer}, Invoice: #{invoice.id}"
+    
+    account = Account.find_by(stripe_customer_id: invoice.customer)
+    
+    
+    # Fallback for local testing: Try to find by email if customer ID doesn't match
+    if !account && Rails.env.development?
+      customer_email = invoice.customer_email
+      
+      # If invoice doesn't have email, try fetching the customer object
+      if customer_email.blank? && invoice.customer
+        begin
+          customer = Stripe::Customer.retrieve(invoice.customer)
+          customer_email = customer.email
+          Rails.logger.info "🔍 Fetched customer from Stripe: #{customer_email}"
+        rescue => e
+          Rails.logger.error "⚠️ Error fetching customer from Stripe: #{e.message}"
+        end
+      end
+
+      if customer_email.present?
+        Rails.logger.warn "⚠️ Account not found by ID. Trying email fallback: #{customer_email}"
+        account = Account.find_by(billing_email: customer_email) || 
+                  User.find_by(email: customer_email)&.account
+        
+        if account
+          Rails.logger.info "✅ Account found via email fallback: #{account.name}"
+          # Optional: Update the ID to match future requests
+          account.update(stripe_customer_id: invoice.customer)
+        end
+      end
+    end
+    
+    unless account
+      Rails.logger.error "❌ Account not found for Stripe Customer ID: #{invoice.customer}"
+      return
+    end
+
+    Rails.logger.info "✅ Account found: #{account.name} (ID: #{account.id})"
+
+    # Create Payment Record
+    payment = Payment.create!(
+      account: account,
+      stripe_payment_intent_id: invoice.payment_intent,
+      stripe_invoice_id: invoice.id,
+      amount_cents: invoice.amount_paid,
+      currency: invoice.currency,
+      status: 'succeeded',
+      payment_date: Time.at(invoice.created),
+      metadata: { 
+        hosted_invoice_url: invoice.hosted_invoice_url,
+        pdf: invoice.invoice_pdf 
+      }
+    )
+
+    Rails.logger.info "✅ Payment record created: ##{payment.id} for $#{payment.amount_cents / 100.0}"
+
+    # Ensure account is active if payment succeeded
+    if account.status != 'active'
+      account.update!(status: :active)
+      Rails.logger.info "✅ Account #{account.id} activated due to successful payment."
+    end
   end
 end

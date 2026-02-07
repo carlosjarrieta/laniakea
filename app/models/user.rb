@@ -32,7 +32,7 @@ class User < ApplicationRecord
     if superadmin?
       json[:has_active_plan] = true
     else
-      json[:has_active_plan] = account&.status == 'active'
+      json[:has_active_plan] = ['active', 'trialing'].include?(account&.status) && account&.plan_id.present?
     end
 
     # Pass plan features if they have an account

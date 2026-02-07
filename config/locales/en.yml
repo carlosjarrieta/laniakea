@@ -172,6 +172,7 @@ en:
       global_management: "Global Management"
       accounts: "Accounts"
       plans: "Plans"
+      payments: "Payments"
       system: "System"
       settings: "Settings"
       panel_desc: "Superadmin Panel"
@@ -236,6 +237,45 @@ en:
         features: "Features"
       modals:
         mode_indicator: "Superadmin Mode"
+    payments:
+      subtitle: "View all transactions and revenue."
+      total_revenue: "Total Revenue"
+      no_payments: "No payments found."
+      table:
+        date: "Date"
+        account: "Account"
+        amount: "Amount"
+        status: "Status"
+        invoice: "Invoice"
+  onboarding:
+    title: "Initialize Your Organization"
+    subtitle: "Define your workspace parameters and fiscal details before we start orchestrating your content."
+    blueprint: "Organization Blueprint"
+    blueprint_desc: "Set your identity and billing coordinates (required for invoices)."
+    workspace_type: "Workspace Type"
+    company_name: "Entity Name / Razón Social"
+    tax_id: "Tax ID / RUT / RFC"
+    billing_email: "Billing Email"
+    phone: "Phone Coordinate"
+    address: "Physical Address"
+    region: "Region"
+    city: "City Hub"
+    postal_code: "Post Code"
+    submit: "Initialize Workspace"
+    success: "Organization initialized successfully!"
+  invitations:
+    page:
+      title: "You've been invited!"
+      subtitle: "You've been invited to join %{account} as %{role}."
+      error_title: "Error"
+      error_invalid: "The invitation is invalid or has expired."
+      logged_in_as: "Logged in as"
+      wrong_account: "This invitation was sent to %{email}, but you are logged in as %{current_email}."
+      switch_account: "Switch account"
+      accept_button: "Accept Invitation"
+      login_button: "Login"
+      signup_button: "Sign up"
+      success: "Welcome to the team!"
   mailer:
     layout:
       title: "Laniakea"
