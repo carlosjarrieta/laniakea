@@ -5,9 +5,10 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable,
          :confirmable, :lockable,
          :jwt_authenticatable, jwt_revocation_strategy: self
-
-  has_one_attached :profile_image
-  has_one :billing_info, dependent: :destroy
+ has_one_attached :profile_image
+ 
+  has_one :membership, dependent: :destroy
+  has_one :account, through: :membership
 
   enum role: { advertiser: 0, superadmin: 1 }
 

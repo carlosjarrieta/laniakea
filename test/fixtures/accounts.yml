@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  account_type: 1
+  billing_email: MyString
+  country_code: MyString
+  currency_name: MyString
+  currency_symbol: MyString
+  address: MyString
+  postal_code: MyString
+  city: MyString
+  phone_number: MyString
+  stripe_customer_id: MyString
+  plan: one
+  status: 1
+
+two:
+  name: MyString
+  account_type: 1
+  billing_email: MyString
+  country_code: MyString
+  currency_name: MyString
+  currency_symbol: MyString
+  address: MyString
+  postal_code: MyString
+  city: MyString
+  phone_number: MyString
+  stripe_customer_id: MyString
+  plan: two
+  status: 1

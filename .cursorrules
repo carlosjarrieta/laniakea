@@ -199,7 +199,31 @@ className="h-9 focus-visible:ring-4 focus-visible:ring-primary"
 - Los temas de color usan clases como `.theme-blue`, `.theme-green`, etc.
 - El `ThemeColorProvider` aplica la clase al `<body>` automáticamente
 
-## 🌐 Traducciones (i18n)
+## ⌨️ Elementos Interactivos y Feedback
+**CRÍTICO: Todo botón o icono de acción DEBE tener un Tooltip descriptivo.**
+
+### Reglas de Tooltips:
+1. **Obligatoriedad**: Todo botón (`<Button>`) que solo contenga un icono, o botones de acción en tablas/listas, DEBEN estar envueltos en un componente `Tooltip`.
+2. **Accesibilidad**: El Tooltip ayuda a usuarios con lectores de pantalla y mejora la UX en interfaces compactas.
+3. **Consistencia**: Usar el componente `Tooltip` de shadcn/ui.
+4. **Traducción**: El contenido del Tooltip DEBE provenir de las traducciones (i18n).
+
+### Ejemplo de Uso Correcto:
+```tsx
+<TooltipProvider>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="ghost" size="icon" className="h-9 w-9">
+        <Edit2 size={14} />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{t('superadmin.actions.edit')}</p>
+    </TooltipContent>
+  </Tooltip>
+</TooltipProvider>
+```
+
 **OBLIGATORIO: Nunca hardcodear textos en componentes.**
 
 ### Reglas de Traducción:

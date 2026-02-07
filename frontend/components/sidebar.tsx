@@ -41,13 +41,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useTranslations } from "@/hooks/use-translations";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function Sidebar() {
   const pathname = usePathname();
   const { handleLogout, user } = useAuth();
   const { collapsed, mobileOpen, setMobileOpen } = useSidebar();
+  const { locale } = useLanguage();
 
-  const { t } = useTranslations();
+  const { t } = useTranslations(locale);
 
   const menuGroups = [
     {
@@ -57,39 +59,39 @@ export function Sidebar() {
       ]
     },
     {
-      label: "Operación", // These seem like dynamic modules, keeping as is for now or add keys if needed
+      label: t('sidebar.operation'),
       items: [
-        { label: "Ventas", icon: ShoppingCart, href: "/sales" },
-        { label: "Asistencia", icon: Users, href: "/attendance" },
-        { label: "Despachos", icon: Truck, href: "/dispatches" },
-        { label: "Pagos", icon: CreditCard, href: "/payments" },
+        { label: t('sidebar.sales'), icon: ShoppingCart, href: "/sales" },
+        { label: t('sidebar.attendance'), icon: Users, href: "/attendance" },
+        { label: t('sidebar.dispatches'), icon: Truck, href: "/dispatches" },
+        { label: t('sidebar.payments'), icon: CreditCard, href: "/payments" },
       ]
     },
     {
-      label: "Inventario",
+      label: t('sidebar.inventory'),
       items: [
-        { label: "Stock", icon: Box, href: "/stock" },
-        { label: "Almacenes", icon: Archive, href: "/warehouses" },
-        { label: "Transferencias", icon: ArrowRightLeft, href: "/transfers" },
-        { label: "Compras", icon: ShoppingBag, href: "/purchases" },
-        { label: "Clientes", icon: t('sidebar.clients'), href: "/clients" },
-        { label: "Proveedores", icon: Truck, href: "/suppliers" },
+        { label: t('sidebar.stock'), icon: Box, href: "/stock" },
+        { label: t('sidebar.warehouses'), icon: Archive, href: "/warehouses" },
+        { label: t('sidebar.transfers'), icon: ArrowRightLeft, href: "/transfers" },
+        { label: t('sidebar.purchases'), icon: ShoppingBag, href: "/purchases" },
+        { label: t('sidebar.clients'), icon: Users, href: "/clients" },
+        { label: t('sidebar.suppliers'), icon: Truck, href: "/suppliers" },
       ]
     },
     {
-      label: "Catálogo",
+      label: t('sidebar.catalog'),
       items: [
-        { label: "Productos", icon: Tag, href: "/products" },
-        { label: "Categorías", icon: Box, href: "/categories" },
+        { label: t('sidebar.products'), icon: Tag, href: "/products" },
+        { label: t('sidebar.categories'), icon: Box, href: "/categories" },
       ]
     },
     {
-      label: "Administración",
+      label: t('sidebar.administration'),
       items: [
-        { label: "Cajas", icon: Wallet, href: "/registers" },
-        { label: "Propiedades", icon: Store, href: "/properties" },
-        { label: "Roles y permisos", icon: Shield, href: "/roles" },
-        { label: "Empresa", icon: Building2, href: "/company" },
+        { label: t('sidebar.registers'), icon: Wallet, href: "/registers" },
+        { label: t('sidebar.properties'), icon: Store, href: "/properties" },
+        { label: t('sidebar.roles'), icon: Shield, href: "/roles" },
+        { label: t('sidebar.company'), icon: Building2, href: "/company" },
       ]
     }
   ];
@@ -123,16 +125,16 @@ export function Sidebar() {
         )}
       >
         <div className={cn(
-          "h-16 flex items-center px-4 mb-2",
+          "h-14 flex items-center px-4 mb-2 border-b dark:border-zinc-800/50",
           collapsed ? "justify-center" : "gap-3"
         )}>
-          <div className="flex items-center justify-center w-10 h-10 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-lg shrink-0">
-            <Rocket className="w-6 h-6" strokeWidth={2.5} />
+          <div className="flex items-center justify-center w-8 h-8 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-md shrink-0">
+            <Rocket className="w-5 h-5" strokeWidth={2.5} />
           </div>
           {!collapsed && (
             <div className="flex flex-col justify-center">
-              <span className="text-lg font-extrabold tracking-tight text-violet-700 dark:text-violet-400 leading-none">LANIAKEA</span>
-              <span className="text-[9px] text-muted-foreground font-medium tracking-widest uppercase leading-tight mt-0.5">Social Media Manager</span>
+              <span className="text-base font-bold tracking-tight text-violet-700 dark:text-violet-400 leading-none">LANIAKEA</span>
+              <span className="text-[8px] text-muted-foreground font-medium tracking-widest uppercase leading-tight mt-0.5">Social Media Manager</span>
             </div>
           )}
         </div>
@@ -174,56 +176,56 @@ export function Sidebar() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className={cn(
-              "flex w-full items-center gap-3 p-2 rounded-xl transition-all hover:bg-zinc-100 dark:hover:bg-zinc-900 focus:outline-none",
+              "flex w-full items-center gap-3 p-1.5 rounded-lg transition-all hover:bg-zinc-100 dark:hover:bg-zinc-900/50 focus:outline-none",
               collapsed && "justify-center"
             )}>
-               <Avatar className="h-9 w-9 border border-zinc-200 dark:border-zinc-800 shrink-0">
+               <Avatar className="h-8 w-8 border border-zinc-200 dark:border-zinc-800 shrink-0">
                   <AvatarImage src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user?.email || 'admin'}`} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">
                     {user?.email?.substring(0, 2).toUpperCase() || 'AD'}
                   </AvatarFallback>
                 </Avatar>
                 
                 {!collapsed && (
                   <div className="flex-1 min-w-0 text-left">
-                     <p className="text-sm font-semibold truncate text-zinc-900 dark:text-zinc-100">
+                     <p className="text-sm font-semibold truncate text-zinc-900 dark:text-zinc-100 leading-tight">
                        {user?.name || 'Administrador'}
                      </p>
-                     <p className="text-xs text-zinc-500 truncate">{user?.email || 'user@admin.com'}</p>
+                     <p className="text-[10px] text-zinc-500 truncate leading-tight">{user?.email || 'user@admin.com'}</p>
                   </div>
                 )}
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align={collapsed ? "center" : "end"} side={collapsed ? "right" : "top"} className="w-56 rounded-xl p-2 mb-2">
-            <DropdownMenuLabel className="px-2 py-1.5 text-xs font-bold text-zinc-500 uppercase tracking-wider">
+          <DropdownMenuContent align={collapsed ? "center" : "end"} side={collapsed ? "right" : "top"} className="w-56 mb-2">
+            <DropdownMenuLabel>
               Mi Cuenta
             </DropdownMenuLabel>
-            <DropdownMenuSeparator className="-mx-2 my-1" />
-            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
-              <Link href="/settings/profile" className="flex items-center">
-                <User size={16} className="mr-2 text-zinc-500" />
-                <span className="font-medium text-[13px]">Perfil</span>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href="/settings/profile" className="flex items-center w-full">
+                <User size={16} className="mr-2" />
+                <span>Perfil</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
-              <Link href="/settings/security" className="flex items-center">
-                <Shield size={16} className="mr-2 text-zinc-500" />
-                <span className="font-medium text-[13px]">Seguridad</span>
+            <DropdownMenuItem asChild>
+              <Link href="/settings/security" className="flex items-center w-full">
+                <Shield size={16} className="mr-2" />
+                <span>Seguridad</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="rounded-lg cursor-pointer py-2 focus:bg-zinc-100 dark:focus:bg-zinc-800" asChild>
-              <Link href="/settings/billing" className="flex items-center">
-                <CreditCard size={16} className="mr-2 text-zinc-500" />
-                <span className="font-medium text-[13px]">Facturación</span>
+            <DropdownMenuItem asChild>
+              <Link href="/settings/billing" className="flex items-center w-full">
+                <CreditCard size={16} className="mr-2" />
+                <span>Facturación</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="-mx-2 my-1" />
+            <DropdownMenuSeparator />
             <DropdownMenuItem 
-              className="rounded-lg cursor-pointer py-2 focus:bg-red-50 text-red-600 dark:focus:bg-red-950/20" 
+              className="text-red-600 focus:text-red-700 focus:bg-red-50" 
               onClick={handleLogout}
             >
               <LogOut size={16} className="mr-2" />
-              <span className="font-bold text-[13px]">Cerrar sesión</span>
+              <span className="font-bold">Cerrar sesión</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

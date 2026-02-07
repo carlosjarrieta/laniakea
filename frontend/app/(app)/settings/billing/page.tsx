@@ -24,7 +24,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "../../../../components/ui/textarea";
 import { 
   Select,
   SelectContent,
@@ -39,11 +39,13 @@ import { useBilling } from "@/hooks/use-billing";
 
 const billingFormSchema = z.object({
   tax_id: z.string().min(1, "Tax ID is required"),
-  company_name: z.string().min(1, "Company name is required"),
+  name: z.string().min(1, "Account name is required"),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
-  zip_code: z.string().min(1, "Zip code is required"),
-  country: z.string().min(1, "Country is required"),
+  postal_code: z.string().min(1, "Postal code is required"),
+  country_code: z.string().min(1, "Country is required"),
+  billing_email: z.string().email("Invalid email").optional(),
+  phone_number: z.string().optional(),
 });
 
 const paymentFormSchema = z.object({
@@ -68,11 +70,13 @@ export default function BillingSettingsPage() {
     resolver: zodResolver(billingFormSchema),
     defaultValues: {
       tax_id: "",
-      company_name: "",
+      name: "",
       address: "",
       city: "",
-      zip_code: "",
-      country: "",
+      postal_code: "",
+      country_code: "",
+      billing_email: "",
+      phone_number: "",
     },
   });
 
@@ -94,11 +98,13 @@ export default function BillingSettingsPage() {
       if (data) {
         billingForm.reset({
           tax_id: data.tax_id || "",
-          company_name: data.company_name || "",
+          name: data.name || "",
           address: data.address || "",
           city: data.city || "",
-          zip_code: data.zip_code || "",
-          country: data.country || ""
+          postal_code: data.postal_code || "",
+          country_code: data.country_code || "",
+          billing_email: data.billing_email || "",
+          phone_number: data.phone_number || "",
         });
       }
     });
@@ -372,13 +378,50 @@ export default function BillingSettingsPage() {
               />
               <FormField
                 control={billingForm.control}
-                name="company_name"
+                name="name"
                 render={({ field }) => (
                   <FormItem className="space-y-1.5">
                     <FormLabel className="text-xs font-medium text-muted-foreground">{t('settings.billing.company_name')}</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="Company Name S.A." 
+                        {...field} 
+                        className="h-9 text-sm border-border/60 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={billingForm.control}
+                name="billing_email"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-xs font-medium text-muted-foreground">{t('login.email_label')}</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="billing@example.com" 
+                        {...field} 
+                        className="h-9 text-sm border-border/60 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50" 
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={billingForm.control}
+                name="phone_number"
+                render={({ field }) => (
+                  <FormItem className="space-y-1.5">
+                    <FormLabel className="text-xs font-medium text-muted-foreground">{t('settings.profile.phone_number') || 'Teléfono'}</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="+1 234 567 890" 
                         {...field} 
                         className="h-9 text-sm border-border/60 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50" 
                       />
@@ -423,7 +466,7 @@ export default function BillingSettingsPage() {
               />
               <FormField
                 control={billingForm.control}
-                name="zip_code"
+                name="postal_code"
                 render={({ field }) => (
                   <FormItem className="space-y-1.5">
                     <FormLabel className="text-xs font-medium text-muted-foreground">{t('settings.billing.zip_code')}</FormLabel>
@@ -436,7 +479,7 @@ export default function BillingSettingsPage() {
               />
               <FormField
                 control={billingForm.control}
-                name="country"
+                name="country_code"
                 render={({ field }) => (
                   <FormItem className="space-y-1.5">
                     <FormLabel className="text-xs font-medium text-muted-foreground">{t('settings.billing.country')}</FormLabel>

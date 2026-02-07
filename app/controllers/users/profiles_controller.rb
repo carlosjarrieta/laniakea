@@ -3,14 +3,20 @@ class Users::ProfilesController < ApplicationController
   respond_to :json
 
   def show
-    render json: current_user.as_json(only: [:id, :email, :name, :role, :timezone, :locale, :theme_color]), status: :ok
+    render json: current_user.as_json(
+      only: [:id, :email, :name, :role, :timezone, :locale, :theme_color],
+      include: { account: { only: [:id, :name, :account_type, :status] } }
+    ), status: :ok
   end
 
   def update
     if current_user.update(profile_params)
       render json: {
         message: I18n.t('users.profiles.updated'),
-        user: current_user.as_json(only: [:id, :email, :name, :role, :timezone, :locale, :theme_color])
+        user: current_user.as_json(
+          only: [:id, :email, :name, :role, :timezone, :locale, :theme_color],
+          include: { account: { only: [:id, :name, :account_type, :status] } }
+        )
       }, status: :ok
     else
       render json: {

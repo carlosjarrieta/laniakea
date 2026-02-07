@@ -21,6 +21,19 @@ import {
   Pie,
   Cell
 } from "recharts";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
+import api from "@/lib/api";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useTranslations } from "../../../hooks/use-translations";
 
 const performanceData = [
   { name: "Lun", value: 24828 },
@@ -64,6 +77,115 @@ const recentSales = [
 ];
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const { locale } = useLanguage();
+  const { t } = useTranslations(locale);
+
+  useEffect(() => {
+    if (user?.role === 'superadmin') {
+      setIsLoading(true);
+      api.get('/superadmin/accounts')
+        .then(res => setAccounts(res.data))
+        .finally(() => setIsLoading(false));
+    }
+  }, [user]);
+
+  if (user?.role === 'superadmin') {
+    return (
+      <div className="space-y-6 min-h-screen bg-transparent">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">{t('superadmin.dashboard.title')}</h2>
+            <p className="text-xs md:text-sm text-muted-foreground">{t('superadmin.dashboard.subtitle')}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+            <CardContent className="p-4 md:p-6">
+              <span className="text-sm font-medium text-muted-foreground">{t('superadmin.dashboard.total_accounts')}</span>
+              <div className="text-3xl font-bold mt-2">{accounts.length}</div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+            <CardContent className="p-4 md:p-6">
+              <span className="text-sm font-medium text-muted-foreground">{t('superadmin.dashboard.active_accounts')}</span>
+              <div className="text-3xl font-bold mt-2">{accounts.filter(a => a.status === 'active').length}</div>
+            </CardContent>
+          </Card>
+          <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+            <CardContent className="p-4 md:p-6">
+              <span className="text-sm font-medium text-muted-foreground">{t('superadmin.dashboard.trial_accounts')}</span>
+              <div className="text-3xl font-bold mt-2">{accounts.filter(a => a.status === 'trialing').length}</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
+          <CardContent className="p-4 md:p-6">
+            <h3 className="text-sm font-semibold text-foreground mb-4">{t('superadmin.dashboard.registered_accounts')}</h3>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/40 hover:bg-transparent">
+                    <TableHead className="font-semibold">{t('superadmin.dashboard.table.name')}</TableHead>
+                    <TableHead className="font-semibold">{t('superadmin.dashboard.table.plan')}</TableHead>
+                    <TableHead className="font-semibold">{t('superadmin.dashboard.table.status')}</TableHead>
+                    <TableHead className="font-semibold">{t('superadmin.dashboard.table.owner')}</TableHead>
+                    <TableHead className="font-semibold text-right">{t('superadmin.dashboard.table.created')}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t('superadmin.dashboard.table.loading')}</TableCell>
+                    </TableRow>
+                  ) : accounts.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">{t('superadmin.dashboard.table.no_accounts')}</TableCell>
+                    </TableRow>
+                  ) : (
+                    accounts.map((account) => (
+                      <TableRow key={account.id} className="hover:bg-muted/30 border-border/20 transition-colors">
+                        <TableCell className="font-medium py-3">{account.name}</TableCell>
+                        <TableCell className="py-3 text-muted-foreground">
+                          <span className="px-2 py-0.5 bg-primary/5 text-primary rounded-full text-[11px] font-bold border border-primary/10">
+                            {account.plan?.name || t('common.none')}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-3">
+                          <span className={cn(
+                            "px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider",
+                            account.status === 'active' ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" :
+                            account.status === 'trialing' ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
+                            "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+                          )}>
+                            {account.status}
+                          </span>
+                        </TableCell>
+                        <TableCell className="py-3">
+                          <div className="flex flex-col">
+                            <span className="text-xs font-semibold">{account.owner?.name}</span>
+                            <span className="text-[10px] text-muted-foreground">{account.owner?.email}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3 text-right text-muted-foreground text-xs">
+                          {new Date(account.created_at).toLocaleDateString()}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 min-h-screen bg-transparent">
       

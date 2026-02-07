@@ -7,13 +7,13 @@ import api from "@/lib/api";
 export function useBilling() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [billingInfo, setBillingInfo] = useState<any>(null);
+  const [account, setAccount] = useState<any>(null);
 
   const fetchBillingInfo = useCallback(async () => {
     setIsFetching(true);
     try {
-      const response = await api.get("/users/billing_info");
-      setBillingInfo(response.data);
+      const response = await api.get("/account");
+      setAccount(response.data);
       return response.data;
     } catch (error: any) {
       toast.error("Error loading billing information");
@@ -26,9 +26,9 @@ export function useBilling() {
   async function updateBilling(data: any) {
     setIsLoading(true);
     try {
-      const response = await api.put("/users/billing_info", { billing_info: data });
+      const response = await api.put("/account", { account: data });
       toast.success(response.data.message);
-      setBillingInfo(response.data.billing_info);
+      setAccount(response.data.account);
       return { success: true };
     } catch (error: any) {
       const message = error.response?.data?.message || "Something went wrong";
@@ -40,7 +40,7 @@ export function useBilling() {
   }
 
   return {
-    billingInfo,
+    account,
     isLoading,
     isFetching,
     fetchBillingInfo,

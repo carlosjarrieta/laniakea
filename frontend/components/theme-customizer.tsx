@@ -28,7 +28,7 @@ import { useAuthStore } from "@/store/useAuthStore"
 import api from "@/lib/api"
 import { toast } from "sonner"
 
-export function ThemeCustomizer() {
+export function ThemeCustomizer({ className }: { className?: string }) {
   const { themeColor, setThemeColor } = useThemeColor()
   const { user, updateUser } = useAuthStore()
 
@@ -53,17 +53,23 @@ export function ThemeCustomizer() {
 
   return (
     <Select value={themeColor} onValueChange={handleThemeChange}>
-      <SelectTrigger className="w-[120px] h-10 rounded-xl border-zinc-200 bg-white/50 backdrop-blur-sm focus:ring-violet-500/20 transition-all font-medium text-zinc-700">
+      <SelectTrigger className={cn(
+        "h-9 text-sm border-border/60 focus:ring-1 focus:ring-primary/20 focus:border-primary/50",
+        className
+      )}>
         <SelectValue placeholder="Tema" />
       </SelectTrigger>
-      <SelectContent className="rounded-xl border-zinc-200">
+      <SelectContent className="border-border/40">
         {themes.map((theme) => (
           <SelectItem 
             key={theme.value} 
             value={theme.value}
-            className="rounded-lg focus:bg-zinc-100 py-2.5"
+            className="focus:bg-primary/10"
           >
-            <span className="font-medium text-zinc-700">{theme.name}</span>
+            <div className="flex items-center gap-2">
+              <div className={cn("h-3 w-3 rounded-full shrink-0", theme.color)} />
+              <span className="font-medium">{theme.name}</span>
+            </div>
           </SelectItem>
         ))}
       </SelectContent>

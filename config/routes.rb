@@ -14,8 +14,19 @@ Rails.application.routes.draw do
 
   namespace :users do
     resource :profile, only: [:show, :update]
-    resource :billing_info, only: [:show, :update]
   end
+
+  resource :account, only: [:show, :update]
+
+  namespace :superadmin do
+    resources :plans
+    resources :accounts, only: [:index, :show, :update]
+  end
+
+  resources :plans, only: [:index, :show]
+  get 'onboarding/countries', to: 'onboarding#countries'
+  post 'onboarding', to: 'onboarding#create'
+  post 'webhooks/stripe', to: 'webhooks#stripe'
 
 
   resources :locales, only: [:show], constraints: { id: /en|es/ }

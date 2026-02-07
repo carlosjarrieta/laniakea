@@ -10,9 +10,29 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_02_06_223807) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_07_033642) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "accounts", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "account_type", default: 0, null: false
+    t.string "billing_email"
+    t.string "country_code", null: false
+    t.string "currency_name"
+    t.string "currency_symbol"
+    t.string "address"
+    t.string "postal_code"
+    t.string "city"
+    t.string "phone_number"
+    t.string "stripe_customer_id"
+    t.bigint "plan_id"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "tax_id"
+    t.index ["plan_id"], name: "index_accounts_on_plan_id"
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -42,17 +62,31 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_06_223807) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "billing_infos", force: :cascade do |t|
-    t.string "tax_id"
-    t.string "company_name"
-    t.string "address"
-    t.string "city"
-    t.string "zip_code"
-    t.string "country"
+  create_table "memberships", force: :cascade do |t|
     t.bigint "user_id", null: false
+    t.bigint "account_id", null: false
+    t.integer "role", default: 0, null: false
+    t.integer "status", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_billing_infos_on_user_id"
+    t.index ["account_id"], name: "index_memberships_on_account_id"
+    t.index ["user_id"], name: "index_memberships_on_user_id"
+  end
+
+  create_table "plans", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "price_cents", default: 0, null: false
+    t.string "currency", default: "USD", null: false
+    t.string "interval", default: "monthly", null: false
+    t.jsonb "features", default: {}, null: false
+    t.string "stripe_price_id"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "max_users", default: 1, null: false
+    t.integer "max_social_profiles", default: 5, null: false
+    t.integer "price_cents_yearly"
+    t.string "stripe_yearly_price_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -88,7 +122,9 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_06_223807) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
+  add_foreign_key "accounts", "plans"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "billing_infos", "users"
+  add_foreign_key "memberships", "accounts"
+  add_foreign_key "memberships", "users"
 end

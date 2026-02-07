@@ -203,7 +203,12 @@ export default function ProfileSettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <ThemeCustomizer />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <span className="text-xs font-medium text-muted-foreground">{t('settings.profile.theme_color')}</span>
+                  <ThemeCustomizer className="w-full" />
+                </div>
+              </div>
             </CardContent>
           </Card>
 
