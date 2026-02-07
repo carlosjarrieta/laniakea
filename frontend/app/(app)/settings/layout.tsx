@@ -7,12 +7,15 @@ import { User, CreditCard, Shield, Bell, Users } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLanguage } from "@/components/providers/language-provider";
 
+import { useAuthStore } from "@/store/useAuthStore";
+
 export default function SettingsLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
     const pathname = usePathname();
+    const { user } = useAuthStore();
     const { locale } = useLanguage();
     const { t } = useTranslations(locale);
 
@@ -22,7 +25,8 @@ export default function SettingsLayout({
             href: "/settings/profile",
             icon: User,
         },
-        {
+        // Only owners can manage billing
+        user?.account_role === 'owner' && {
             title: t('settings.menu.billing'),
             href: "/settings/billing",
             icon: CreditCard,
@@ -37,12 +41,13 @@ export default function SettingsLayout({
             href: "/settings/notifications",
             icon: Bell,
         },
-        {
+        // Only owners and admins can manage the team
+        ['owner', 'admin'].includes(user?.account_role || '') && {
             title: t('settings.menu.team'),
             href: "/settings/team",
             icon: Users,
         },
-    ];
+    ].filter(Boolean) as { title: string; href: string; icon: any }[];
 
     return (
         <div className="space-y-6">

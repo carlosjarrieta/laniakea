@@ -1,0 +1,12 @@
+---
+:concurrency: 5
+:queues:
+  - [critical, 2]     # High priority queue
+  - [default, 1]      # Standard priority
+  - [mailers, 1]      # For ActionMailer deliveries
+  - [active_storage_analysis, 1]
+  - [active_storage_purge, 1]
+
+# Development-specific settings can be overridden here or via command line
+:timeout: 25
+:verbose: false

@@ -260,3 +260,27 @@ frontend/app/themes/
 ├── yellow.css    # Tema ámbar
 └── red.css       # Tema rojo
 ```
+
+## 🏛️ Vistas de Configuración (Unified Layout)
+**CRÍTICO: Todas las vistas dentro de `/settings` deben seguir el mismo patrón visual unificado para consistencia.**
+
+1. **Encabezado de Página**:
+   - Título: `text-lg font-bold tracking-tight text-foreground`.
+   - Descripción: `text-xs text-muted-foreground font-medium`.
+   - Contenedor: `space-y-1` envuelto en un `div` con `space-y-6` para el contenido.
+
+2. **Estilo de Cards**:
+   - **Cabecera (CardHeader)**: Fondo `bg-muted/30`, borde inferior `border-b`, padding `p-5`.
+   - **Iconografía**: Incluir un icono de `lucide-react` (size 16) con clase `text-primary` junto al título.
+   - **Títulos**: `text-sm font-bold`.
+   - **Descripciones**: `text-[11px]`.
+   - **Cuerpo (CardContent)**: Padding `p-5`.
+
+3. **Formularios en Settings**:
+   - **Labels**: `text-[10px] font-bold text-muted-foreground uppercase tracking-wider ml-0.5`.
+   - **Inputs/Selects**: Estilo compacto con fondo `bg-muted/20`.
+   - **Botones**: `h-9 px-6 text-xs font-bold rounded-lg shadow-sm`.
+
+4. **Rendimiento y UX**:
+   - **SIN TRANSICIONES**: NUNCA usar clases de `animate-in` o efectos de fade en las vistas de /settings para favorecer una experiencia instantánea.
+   - **Tooltips**: Obligatorios en todos los botones de acción (especialmente los de iconos solos).

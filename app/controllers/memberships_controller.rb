@@ -5,7 +5,7 @@ class MembershipsController < ApplicationController
   def index
     account = current_user.account
     memberships = account.memberships.includes(:user)
-    invitations = account.invitations
+    invitations = account.invitations.where(accepted_at: nil)
 
     render json: {
       memberships: memberships.as_json(include: :user),

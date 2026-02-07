@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 ruby "3.2.2"
-gem "rails", "~> 7.1.6"
+gem 'rails', '~> 7.2', '>= 7.2.3'
 gem "pg", "~> 1.1"
 gem "puma", ">= 5.0"
 gem "tzinfo-data", platforms: %i[ mswin mswin64 mingw x64_mingw jruby ]
@@ -15,9 +15,9 @@ gem "countries"
 gem "stripe"
 
 # Background Jobs
-gem 'sidekiq', '~> 6.5'
-gem 'redis'
-gem 'redis-namespace'
+gem "sidekiq", "~> 8.1"
+gem "redis", "~> 5.4"
+gem "redis-namespace", "~> 1.11"
 
 # security and roles
 gem "cancancan", "~> 3.6"
@@ -33,5 +33,9 @@ end
 
 group :development do
 end
+
+
+
+
 
 
