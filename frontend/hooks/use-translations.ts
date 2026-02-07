@@ -20,10 +20,18 @@ export const useTranslations = (locale: string = 'es') => {
     fetchTranslations();
   }, [locale]);
 
-  const t = (key: string) => {
+  const t = (key: string, params?: Record<string, any>) => {
     if (!translations) return key;
     
-    return key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
+    let value = key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
+    
+    if (params && typeof value === 'string') {
+      Object.entries(params).forEach(([k, v]) => {
+        value = (value as string).replace(`%{${k}}`, String(v));
+      });
+    }
+    
+    return value;
   };
 
   return { t, isLoading };

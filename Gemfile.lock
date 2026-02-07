@@ -111,6 +111,7 @@ GEM
     bullet (8.1.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
+    cancancan (3.6.1)
     cgi (0.5.1)
     childprocess (5.1.0)
       logger (~> 1.5)
@@ -327,6 +328,7 @@ DEPENDENCIES
   aws-sdk-s3 (~> 1.213)
   bootsnap
   bullet (~> 8.1)
+  cancancan (~> 3.6)
   countries
   devise (~> 5.0)
   devise-jwt (~> 0.13.0)

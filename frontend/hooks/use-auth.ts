@@ -24,7 +24,14 @@ export const useAuth = () => {
 
       login(userData, token);
       if (showToast) toast.success(t('login.success_message') || 'Logged in successfully');
-      router.push("/dashboard");
+      
+      if (!userData.has_account) {
+        router.push("/onboarding/account");
+      } else if (!userData.has_active_plan) {
+        router.push("/plans");
+      } else {
+        router.push("/dashboard");
+      }
       return { success: true };
     } catch (error: any) {
       const message = error.response?.data?.status?.message || 'Error al iniciar sesión';
@@ -41,10 +48,20 @@ export const useAuth = () => {
   const handleSignup = async (userData: any) => {
     setIsLoading(true);
     try {
-      const response = await api.post('/signup', { user: userData });
+      const { invitation_token, ...userParams } = userData;
+      const response = await api.post('/signup', { 
+        user: userParams,
+        invitation_token: invitation_token 
+      });
+      
       const message = response.data.status.message;
       toast.success(message);
-      router.push("/login");
+      
+      // If we signed up with an invitation, we should probably follow the login flow 
+      // but Rails registrations usually don't return the token unless configured.
+      // For now, redirect to login as before, but with the email pre-filled if possible.
+      router.push(`/login?email=${encodeURIComponent(userParams.email)}`);
+      
       return { 
         success: true, 
         data: response.data.data,
@@ -67,6 +84,18 @@ export const useAuth = () => {
     window.location.href = "/login";
   };
 
+  const refreshUser = async () => {
+    try {
+      const response = await api.get('/users/profile');
+      // The backend returns user data directly in current_user.as_json format
+      updateUser(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error refreshing user:", error);
+      return null;
+    }
+  };
+
   return {
     user,
     token,
@@ -75,6 +104,7 @@ export const useAuth = () => {
     handleLogin,
     handleSignup,
     handleLogout,
-    updateUser,
+    refreshUser,
+    updateUser: (userData: any) => updateUser(userData),
   };
 };

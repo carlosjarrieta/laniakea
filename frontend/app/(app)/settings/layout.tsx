@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { User, CreditCard, Shield, Bell } from "lucide-react";
+import { User, CreditCard, Shield, Bell, Users } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLanguage } from "@/components/providers/language-provider";
 
@@ -36,6 +36,11 @@ export default function SettingsLayout({
             title: t('settings.menu.notifications'),
             href: "/settings/notifications",
             icon: Bell,
+        },
+        {
+            title: t('settings.menu.team'),
+            href: "/settings/team",
+            icon: Users,
         },
     ];
 

@@ -93,6 +93,7 @@ en:
       billing: "Billing"
       security: "Security"
       notifications: "Notifications"
+      team: "Team"
     profile:
       personal_info: "Personal Information"
       personal_info_desc: "Update your account settings and preferences."
@@ -131,6 +132,41 @@ en:
       secure_encryption: "Protected with 256-bit SSL encryption"
     security:
       account_protected: "Account Protected"
+    team:
+      title: "Team Management"
+      desc: "Manage your organization's members and their permissions."
+      invite:
+        title: "Invite Member"
+        desc: "Add a new person to your organization."
+        email_label: "Email Address"
+        role_label: "Assigned Role"
+        role_desc: "Admins can manage members and billing."
+        button: "Send Invitation"
+        sending: "Sending..."
+      active_members:
+        title: "Active Members"
+        desc: "Current people in your organization."
+        users_count: "%{count} Users"
+      pending_invitations:
+        title: "Pending Invitations"
+        desc: "Waiting for them to join mission control."
+        sent_at: "Sent %{date}"
+      roles:
+        member: "Member"
+        admin: "Admin"
+        owner: "Owner"
+      messages:
+        fetch_error: "Failed to load team data"
+        invite_success: "Invitation sent successfully!"
+        invite_error: "Failed to send invitation"
+        remove_success: "Member removed"
+        remove_error: "Failed to remove member"
+        cancel_success: "Invitation cancelled"
+        cancel_error: "Failed to cancel invitation"
+        remove_confirm: "Are you sure you want to remove this member?"
+      tooltips:
+        remove: "Remove member"
+        cancel: "Cancel invitation"
   superadmin:
     sidebar:
       global_management: "Global Management"

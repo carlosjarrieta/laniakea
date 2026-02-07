@@ -24,10 +24,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!isAuthenticated && !isPublicRoute) {
       router.push("/login");
+      return;
     }
 
-    if (isAuthenticated && isPublicRoute) {
-      router.push("/dashboard");
+    if (isAuthenticated) {
+      // If user is logged in, check if they need onboarding or a plan
+      const user = useAuthStore.getState().user;
+      
+      // Superadmins bypass onboarding/billing guards
+      if (user?.role === 'superadmin') return;
+
+      const isAuthRoute = publicRoutes.includes(pathname);
+      const isOnboardingRoute = pathname.startsWith("/onboarding");
+      const isPlansRoute = pathname === "/plans";
+      const isSettingsRoute = pathname.startsWith("/settings");
+
+      // 1. Has no account -> Force onboarding
+      if (!user?.has_account && !isOnboardingRoute && !isAuthRoute) {
+        router.push("/onboarding/account");
+        return;
+      }
+
+      // 2. Has account but no active plan -> Force plans page
+      if (user?.has_account && !user?.has_active_plan && !isPlansRoute && !isSettingsRoute && !isAuthRoute) {
+        router.push("/plans");
+        return;
+      }
+
+      // 3. Has active plan and on plans page -> Go to dashboard
+      if (user?.has_active_plan && isPlansRoute) {
+        router.push("/dashboard");
+        return;
+      }
+
+      // 3. User is on a public route but already authenticated -> Go to dashboard
+      if (isAuthRoute) {
+        router.push("/dashboard");
+      }
     }
   }, [isAuthenticated, pathname, router, isMounted]);
 

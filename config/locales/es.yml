@@ -93,6 +93,7 @@ es:
       billing: "Facturación"
       security: "Seguridad"
       notifications: "Notificaciones"
+      team: "Equipo"
     profile:
       personal_info: "Información Personal"
       personal_info_desc: "Actualiza la configuración y preferencias de tu cuenta."
@@ -131,6 +132,37 @@ es:
       secure_encryption: "Protegido con encriptación SSL de 256 bits"
     security:
       account_protected: "Cuenta Protegida"
+    team:
+      title: "Gestión de Equipo"
+      desc: "Administra los miembros de tu organización y sus permisos."
+      invite:
+        title: "Invitar Miembro"
+        desc: "Añade una nueva persona a tu organización."
+        email_label: "Correo Electrónico"
+        role_label: "Rol Asignado"
+        role_desc: "Los administradores pueden gestionar miembros y facturación."
+        button: "Enviar Invitación"
+        sending: "Enviando..."
+      active_members:
+        title: "Miembros Activos"
+        desc: "Personas actuales en tu organización."
+        users_count: "%{count} Usuarios"
+      pending_invitations:
+        title: "Invitaciones Pendientes"
+        desc: "Esperando a que se unan al control de misión."
+        sent_at: "Enviada el %{date}"
+      roles:
+        member: "Miembro"
+        admin: "Administrador"
+        owner: "Dueño"
+      messages:
+        invite_success: "¡Invitación enviada con éxito!"
+        invite_error: "Error al enviar la invitación"
+        remove_success: "Miembro eliminado"
+        remove_error: "Error al eliminar el miembro"
+        cancel_success: "Invitación cancelada"
+        cancel_error: "Error al cancelar la invitación"
+        remove_confirm: "¿Estás seguro de que deseas eliminar a este miembro?"
   superadmin:
     sidebar:
       global_management: "Gestión Global"

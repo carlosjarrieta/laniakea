@@ -144,7 +144,7 @@ function AppLayoutContent({
               </Tooltip>
 
               
-              {!isSuperadmin && (
+              {!isSuperadmin && user?.has_active_plan && (
                 <>
                   {/* Mobile: icon only, Desktop: full button */}
                   <Tooltip>

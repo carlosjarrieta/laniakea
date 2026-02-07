@@ -1,15 +1,40 @@
 class StripeService
-  def self.create_checkout_session(account, plan_id, success_url, cancel_url)
+  def self.create_checkout_session(account, plan_id, interval = 'monthly', success_url, cancel_url)
     plan = Plan.find(plan_id)
     
-    # Initialize Stripe
+    price_id = interval == 'yearly' ? plan.stripe_yearly_price_id : plan.stripe_price_id
+
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+
+    # Ensure account has a stripe_customer_id
+    if account.stripe_customer_id.blank?
+      customer_params = {
+        name: account.name,
+        email: account.billing_email || account.owner&.email,
+        metadata: { 
+          account_id: account.id,
+          tax_id: account.tax_id 
+        }
+      }
+
+      if account.address.present?
+        customer_params[:address] = {
+          line1: account.address,
+          city: account.city,
+          postal_code: account.postal_code,
+          country: account.country_code
+        }
+      end
+
+      customer = Stripe::Customer.create(customer_params)
+      account.update!(stripe_customer_id: customer.id)
+    end
 
     session = Stripe::Checkout::Session.create({
       customer: account.stripe_customer_id,
       payment_method_types: ['card'],
       line_items: [{
-        price: plan.stripe_price_id,
+        price: price_id,
         quantity: 1,
       }],
       mode: 'subscription',
@@ -30,9 +55,9 @@ class StripeService
 
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, endpoint_secret)
-    rescue JSON::ParserError => e
+    rescue JSON::ParserError
       return { status: 400, error: 'Invalid payload' }
-    rescue Stripe::SignatureVerificationError => e
+    rescue Stripe::SignatureVerificationError
       return { status: 400, error: 'Invalid signature' }
     end
 

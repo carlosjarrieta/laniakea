@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Command } from "lucide-react";
-
+import { Card } from "@/components/ui/card";
+import { Loader2, Command, Sparkles } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLanguage } from "@/components/providers/language-provider";
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +22,12 @@ export default function LoginPage() {
   const router = useRouter();
   
   const { locale, setLocale } = useLanguage();
-  const { t, isLoading: isTransLoading } = useTranslations(locale); 
+  const { t } = useTranslations(locale); 
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    if (emailParam) setEmail(emailParam);
+  }, [searchParams]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +57,7 @@ export default function LoginPage() {
       </div>
 
       {/* Subtle background nodes */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-100/50 blur-[120px] rounded-full" />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100/50 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-50/50 blur-[120px] rounded-full" />
 
       <Card className="w-full max-w-[1000px] overflow-hidden border-none shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] z-10 flex flex-col md:flex-row bg-white">
@@ -66,35 +71,41 @@ export default function LoginPage() {
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent flex flex-col justify-end p-10 text-white">
-            <div className="space-y-2">
-               <h2 className="text-2xl font-bold tracking-tight">{t('login.sidebar_title')}</h2>
-               <p className="text-zinc-300 text-sm leading-relaxed max-w-sm">
+            <div className="space-y-4 translate-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-forwards">
+               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-200 text-[10px] font-bold uppercase tracking-widest border border-blue-500/30 backdrop-blur-md">
+                 <Sparkles size={10} />
+                 Mission Control
+               </div>
+               <h2 className="text-3xl font-black tracking-tighter leading-tight">
+                 Orchestrate your <br /> ad universe.
+               </h2>
+               <p className="text-zinc-300 text-sm font-medium leading-relaxed max-w-xs opacity-80">
                  {t('login.sidebar_desc')}
                </p>
             </div>
           </div>
-          <div className="absolute top-10 left-10 flex items-center gap-2 text-white/90 font-bold tracking-tight">
-            <div className="bg-violet-600 rounded-lg p-1">
-              <Command size={18} />
+          <div className="absolute top-10 left-10 flex items-center gap-2 text-white/90 font-black tracking-tighter text-xl">
+            <div className="bg-blue-600 rounded-xl p-1.5 shadow-lg shadow-blue-600/20">
+              <Command size={20} />
             </div>
             Laniakea
           </div>
         </div>
 
         {/* Right Side: Login Form */}
-        <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center bg-white">
+        <div className="w-full md:w-1/2 p-8 md:p-14 flex flex-col justify-center bg-white relative">
           <div className="mb-10 text-center md:text-left">
-            <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 mb-2">
+            <h1 className="text-4xl font-black tracking-tighter text-zinc-900 mb-2 leading-none">
               {t('login.title')}
             </h1>
-            <p className="text-zinc-500 font-medium">
+            <p className="text-zinc-500 font-bold text-sm">
               {t('login.subtitle')}
             </p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-bold text-zinc-700">{t('login.email_label')}</Label>
+            <div className="space-y-1.5">
+              <Label htmlFor="email" className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">{t('login.email_label')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -102,15 +113,15 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="h-12 border-zinc-200 focus:border-violet-500 focus:ring-violet-500/10 rounded-xl transition-all"
+                className="h-12 border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-blue-500 focus:ring-blue-500/10 rounded-2xl transition-all font-bold"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-bold text-zinc-700">{t('login.password_label')}</Label>
+                <Label htmlFor="password" className="text-xs font-black text-zinc-400 uppercase tracking-widest ml-1">{t('login.password_label')}</Label>
                 <Link 
                   href="/forgot-password" 
-                  className="text-xs font-bold text-violet-600 hover:text-violet-700 hover:underline"
+                  className="text-[10px] font-black text-blue-600 hover:text-blue-700 uppercase tracking-widest"
                 >
                   {t('login.forgot_password')}
                 </Link>
@@ -122,20 +133,20 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-12 border-zinc-200 focus:border-violet-500 focus:ring-violet-500/10 rounded-xl transition-all"
+                className="h-12 border-zinc-100 bg-zinc-50/50 focus:bg-white focus:border-blue-500 focus:ring-blue-500/10 rounded-2xl transition-all font-bold"
               />
             </div>
 
             <Button 
               type="submit" 
-              className="w-full h-12 bg-violet-600 hover:bg-violet-700 text-white font-bold text-lg rounded-xl shadow-[0_8px_30px_rgb(139,92,246,0.3)] transition-all active:scale-[0.98] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white font-black text-lg rounded-2xl shadow-[0_12px_40px_-12px_rgba(37,99,235,0.4)] transition-all active:scale-[0.97] mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoading || !email.trim() || !password.trim()}
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  {t('login.submitting')}
-                </>
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  AUTHENTICATING...
+                </div>
               ) : (
                 t('login.submit_button')
               )}
@@ -150,10 +161,9 @@ export default function LoginPage() {
             <Button 
               variant="outline" 
               type="button" 
-              className="w-full h-12 border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-bold rounded-xl transition-all flex gap-2"
+              className="w-full h-12 border-zinc-200 text-zinc-600 hover:bg-zinc-50 font-bold rounded-2xl transition-all flex gap-3 active:scale-[0.98]"
             >
-              <svg className="w-5 h-5 shadow-sm" viewBox="0 0 24 24">
-                {/* SVG Paths stay same */}
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                 <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.27.81-.57z" fill="#FBBC05"/>
@@ -163,8 +173,8 @@ export default function LoginPage() {
             </Button>
 
             <div className="text-center text-sm pt-4">
-              <span className="text-zinc-500 font-medium">{t('login.new_here')}</span>{" "}
-              <Link href="/signup" className="font-extrabold text-violet-600 hover:text-violet-700 underline-offset-4 hover:underline">
+              <span className="text-zinc-500 font-bold">{t('login.new_here')}</span>{" "}
+              <Link href="/signup" className="font-black text-blue-600 hover:text-blue-700 transition-colors">
                 {t('login.create_account')}
               </Link>
             </div>
@@ -173,11 +183,19 @@ export default function LoginPage() {
       </Card>
       
       {/* Social Footer */}
-      <div className="absolute bottom-6 flex gap-6 text-zinc-400 text-xs font-bold uppercase tracking-widest z-10">
-        <span className="hover:text-violet-500 cursor-pointer transition-colors">Twitter</span>
-        <span className="hover:text-violet-500 cursor-pointer transition-colors">Dribbble</span>
-        <span className="hover:text-violet-500 cursor-pointer transition-colors">GitHub</span>
+      <div className="absolute bottom-6 flex gap-8 text-zinc-400 text-[10px] font-black uppercase tracking-widest z-10 transition-all opacity-50 hover:opacity-100">
+        <span className="hover:text-blue-500 cursor-pointer transition-colors">Orbit</span>
+        <span className="hover:text-blue-500 cursor-pointer transition-colors">Signal</span>
+        <span className="hover:text-blue-500 cursor-pointer transition-colors">Core</span>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center font-black text-blue-600 animate-pulse">INITIATING CONTROL...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

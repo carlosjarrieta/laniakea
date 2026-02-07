@@ -9,8 +9,6 @@ gem "bootsnap", require: false
 gem "image_processing", "~> 1.2"
 
 gem "figaro", "~> 1.3"
-gem "devise", "~> 5.0"
-gem "devise-jwt", "~> 0.13.0"
 gem "rack-cors"
 gem "aws-sdk-s3", "~> 1.213"
 gem "countries"
@@ -21,6 +19,11 @@ gem 'sidekiq', '~> 6.5'
 gem 'redis'
 gem 'redis-namespace'
 
+# security and roles
+gem "cancancan", "~> 3.6"
+gem "devise", "~> 5.0"
+gem "devise-jwt", "~> 0.13.0"
+
 
 group :development, :test do
   gem "letter_opener", "~> 1.10"
@@ -30,11 +33,5 @@ end
 
 group :development do
 end
-
-
-
-
-
-
 
 

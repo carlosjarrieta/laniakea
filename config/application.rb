@@ -31,5 +31,10 @@ module Laniakea
 
     # ActiveJob adapter
     config.active_job.queue_adapter = :sidekiq
+
+    # Enable session middleware for Devise (Required even for API mode)
+    config.session_store :cookie_store, key: '_laniakea_session'
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
   end
 end

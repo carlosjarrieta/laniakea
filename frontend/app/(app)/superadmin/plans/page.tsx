@@ -412,18 +412,32 @@ export default function PlansPage() {
                     </div>
                   </div>
 
-                  <FormField
-                    control={form.control}
-                    name="stripe_price_id"
-                    render={({ field }) => (
-                      <FormItem className="space-y-1">
-                        <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">{t('superadmin.plans.form.stripe_id')}</FormLabel>
-                        <FormControl>
-                          <Input placeholder="price_..." className="h-8 text-xs rounded-md shadow-none" {...field} value={field.value || ""} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                  <div className="grid grid-cols-2 gap-3">
+                    <FormField
+                      control={form.control}
+                      name="stripe_price_id"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">{t('superadmin.plans.form.stripe_id')} (Monthly)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="price_..." className="h-8 text-xs rounded-md shadow-none" {...field} value={field.value || ""} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="stripe_yearly_price_id"
+                      render={({ field }) => (
+                        <FormItem className="space-y-1">
+                          <FormLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">{t('superadmin.plans.form.stripe_id')} (Yearly)</FormLabel>
+                          <FormControl>
+                            <Input placeholder="price_..." className="h-8 text-xs rounded-md shadow-none" {...field} value={field.value || ""} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
                   <FormField
                     control={form.control}

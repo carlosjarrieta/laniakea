@@ -9,7 +9,8 @@ Rails.application.routes.draw do
   controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
-    passwords: 'users/passwords'
+    passwords: 'users/passwords',
+    confirmations: 'users/confirmations'
   }
 
   namespace :users do
@@ -23,7 +24,26 @@ Rails.application.routes.draw do
     resources :accounts, only: [:index, :show, :update]
   end
 
+  scope module: :onboarding do
+    resources :accounts, only: [:create]
+  end
+
   resources :plans, only: [:index, :show]
+  resources :subscriptions, only: [] do
+    collection do
+      post :checkout
+      post :portal
+    end
+  end
+  resources :memberships, only: [:index, :destroy] do
+    collection do
+      post :invite
+    end
+    member do
+      delete :cancel, to: 'memberships#cancel_invitation'
+    end
+  end
+  get 'invitations/:token', to: 'memberships#show_invitation'
   get 'onboarding/countries', to: 'onboarding#countries'
   post 'onboarding', to: 'onboarding#create'
   post 'webhooks/stripe', to: 'webhooks#stripe'
