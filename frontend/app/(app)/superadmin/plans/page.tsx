@@ -63,19 +63,6 @@ const planSchema = z.object({
 
 type PlanFormValues = z.infer<typeof planSchema>;
 
-const PLAN_COLORS: Record<string, string> = {
-  'Starter': 'bg-emerald-500',
-  'Professional': 'bg-violet-500',
-  'Enterprise': 'bg-amber-500',
-  'default': 'bg-primary'
-};
-
-const PLAN_GENTLE_COLORS: Record<string, string> = {
-  'Starter': 'from-emerald-500/10 to-transparent',
-  'Professional': 'from-violet-500/10 to-transparent',
-  'Enterprise': 'from-amber-500/10 to-transparent',
-  'default': 'from-primary/10 to-transparent'
-};
 
 export default function PlansPage() {
   const { user } = useAuth();
@@ -104,10 +91,16 @@ export default function PlansPage() {
   });
 
   const onSubmit = async (data: PlanFormValues) => {
+    // Filter out features with empty values (but keep 0 and false)
+    const cleanFeatures = Object.fromEntries(
+      Object.entries(data.features || {}).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+    );
+    const cleanData = { ...data, features: cleanFeatures };
+
     if (editingPlan) {
-      await updatePlan(editingPlan.id, data);
+      await updatePlan(editingPlan.id, cleanData);
     } else {
-      await createPlan(data);
+      await createPlan(cleanData);
     }
     setIsOpen(false);
     setEditingPlan(null);
@@ -132,8 +125,6 @@ export default function PlansPage() {
     setIsOpen(true);
   };
 
-  const getPlanColor = (name: string) => PLAN_COLORS[name] || PLAN_COLORS['default'];
-  const getPlanGentleColor = (name: string) => PLAN_GENTLE_COLORS[name] || PLAN_GENTLE_COLORS['default'];
 
   if (user?.role !== 'superadmin') return null;
 
@@ -334,33 +325,88 @@ export default function PlansPage() {
                             value={key}
                             readOnly
                           />
-                          <Input 
-                            placeholder="Value" 
-                            className="h-7 text-[10px] font-mono flex-1 rounded-sm shadow-none"
-                            value={String(value)}
-                            onChange={(e) => {
-                              const features = { ...form.getValues('features') };
-                              let val: string | number | boolean = e.target.value;
-                              if (val === 'true') val = true;
-                              else if (val === 'false') val = false;
-                              else if (!isNaN(Number(val)) && val !== '') val = Number(val);
-                              features[key] = val;
-                              form.setValue('features', features);
-                            }}
-                          />
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-7 w-7 text-muted-foreground hover:text-destructive opacity-0 group-hover/feat:opacity-100 transition-opacity"
-                            onClick={() => {
-                              const features = { ...form.getValues('features') };
-                              delete features[key];
-                              form.setValue('features', features);
-                            }}
-                          >
-                            <Trash2 size={12} />
-                          </Button>
+                          {(() => {
+                            // Smart input detection based on key
+                            const booleanKeys = ['ai_generation', 'active'];
+                            const numberKeys = ['storage_gb', 'post_multiplier'];
+                            const enumKeys: Record<string, string[]> = {
+                              'analytics': ['basic', 'advanced', 'real-time'],
+                              'support': ['email', 'priority', 'dedicated'],
+                            };
+
+                            if (booleanKeys.includes(key) || typeof value === 'boolean') {
+                              return (
+                                <Select 
+                                  value={String(value)} 
+                                  onValueChange={(val) => {
+                                    const features = { ...form.getValues('features') };
+                                    features[key] = val === 'true';
+                                    form.setValue('features', features);
+                                  }}
+                                >
+                                  <SelectTrigger className="h-7 text-[10px] font-mono flex-1 rounded-sm shadow-none">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="true" className="text-xs">True</SelectItem>
+                                    <SelectItem value="false" className="text-xs">False</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              );
+                            }
+
+                            if (enumKeys[key]) {
+                              return (
+                                <Select 
+                                  value={String(value)} 
+                                  onValueChange={(val) => {
+                                    const features = { ...form.getValues('features') };
+                                    features[key] = val;
+                                    form.setValue('features', features);
+                                  }}
+                                >
+                                  <SelectTrigger className="h-7 text-[10px] font-mono flex-1 rounded-sm shadow-none">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {enumKeys[key].map(opt => (
+                                      <SelectItem key={opt} value={opt} className="text-xs uppercase">{opt}</SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              );
+                            }
+
+                            if (numberKeys.includes(key) || typeof value === 'number') {
+                              return (
+                                <Input 
+                                  type="number"
+                                  placeholder="Value" 
+                                  className="h-7 text-[10px] font-mono flex-1 rounded-sm shadow-none"
+                                  value={String(value)}
+                                  onChange={(e) => {
+                                    const features = { ...form.getValues('features') };
+                                    const val = parseFloat(e.target.value);
+                                    features[key] = isNaN(val) ? 0 : val;
+                                    form.setValue('features', features);
+                                  }}
+                                />
+                              )
+                            }
+                            
+                            return (
+                              <Input 
+                                placeholder="Value" 
+                                className="h-7 text-[10px] font-mono flex-1 rounded-sm shadow-none"
+                                value={String(value)}
+                                onChange={(e) => {
+                                  const features = { ...form.getValues('features') };
+                                  features[key] = e.target.value;
+                                  form.setValue('features', features);
+                                }}
+                              />
+                            );
+                          })()}
                         </div>
                       ))}
                     </div>

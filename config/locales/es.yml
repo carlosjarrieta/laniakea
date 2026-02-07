@@ -161,6 +161,7 @@ es:
       cancel: "Cancelar"
       delete: "Eliminar"
       new: "Nuevo"
+      add: "Añadir"
       activate: "Activar"
       deactivate: "Desactivar"
       search: "Buscar"
