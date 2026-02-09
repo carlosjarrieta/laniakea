@@ -202,6 +202,7 @@ en:
       activate: "Activate"
       deactivate: "Deactivate"
       search: "Search"
+      search_no_results: "No results found."
     form:
       name: "Name"
       status: "Status"
@@ -247,6 +248,7 @@ en:
         amount: "Amount"
         status: "Status"
         invoice: "Invoice"
+        view_invoice: "View Invoice"
   onboarding:
     title: "Initialize Your Organization"
     subtitle: "Define your workspace parameters and fiscal details before we start orchestrating your content."
@@ -276,6 +278,11 @@ en:
       login_button: "Login"
       signup_button: "Sign up"
       success: "Welcome to the team!"
+  not_found:
+    title: "404 - Page Not Found"
+    subtitle: "It seems you're lost in deep space."
+    description: "The page you're looking for doesn't exist or has been moved to another galaxy."
+    back_home: "Back to Home"
   mailer:
     layout:
       title: "Laniakea"

@@ -1,29 +1,20 @@
-import { useState, useEffect } from 'react';
-import api from '@/lib/api';
+import { useEffect } from 'react';
+import { useTranslationStore } from '@/store/useTranslationStore';
 
 export const useTranslations = (locale: string = 'es') => {
-  const [translations, setTranslations] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { translations, isLoading, fetchTranslations } = useTranslationStore();
 
   useEffect(() => {
-    const fetchTranslations = async () => {
-      try {
-        const response = await api.get(`/locales/${locale}`);
-        setTranslations(response.data);
-      } catch (error) {
-        console.error('Error fetching translations:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTranslations();
-  }, [locale]);
+    fetchTranslations(locale);
+  }, [locale, fetchTranslations]);
 
   const t = (key: string, params?: Record<string, any>) => {
-    if (!translations) return key;
+    const localeTranslations = translations[locale];
     
-    let value = key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, translations);
+    // Si no hay traducciones cargadas aún, devolvemos un espacio en blanco para evitar ver la "key"
+    if (!localeTranslations) return '';
+    
+    let value = key.split('.').reduce((obj, k) => (obj && obj[k] !== undefined) ? obj[k] : key, localeTranslations);
     
     if (params && typeof value === 'string') {
       Object.entries(params).forEach(([k, v]) => {

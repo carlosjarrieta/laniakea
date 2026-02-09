@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
+import { useTranslationStore } from '@/store/useTranslationStore';
 
 type LanguageContextType = {
   locale: string;
@@ -10,23 +11,16 @@ type LanguageContextType = {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocale] = useState('en');
+  const { locale, setLocale, fetchTranslations } = useTranslationStore();
 
-  // Cargar preferencia del localStorage si existe
+  // Sincronizar con localStorage al inicio y forzar una actualización
+  // para capturar nuevas llaves que hayamos añadido en el backend
   useEffect(() => {
-    const savedLocale = localStorage.getItem('laniakea-locale');
-    if (savedLocale) {
-      setLocale(savedLocale);
-    }
-  }, []);
-
-  const handleSetLocale = (newLocale: string) => {
-    setLocale(newLocale);
-    localStorage.setItem('laniakea-locale', newLocale);
-  };
+    fetchTranslations(locale, true);
+  }, [locale, fetchTranslations]);
 
   return (
-    <LanguageContext.Provider value={{ locale, setLocale: handleSetLocale }}>
+    <LanguageContext.Provider value={{ locale, setLocale }}>
       {children}
     </LanguageContext.Provider>
   );

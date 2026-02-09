@@ -168,6 +168,7 @@ es:
       global_management: "Gestión Global"
       accounts: "Cuentas"
       plans: "Planes"
+      payments: "Pagos"
       system: "Sistema"
       settings: "Configuración"
       panel_desc: "Panel Superadmin"
@@ -197,6 +198,7 @@ es:
       activate: "Activar"
       deactivate: "Desactivar"
       search: "Buscar"
+      search_no_results: "No se encontraron resultados."
     form:
       name: "Nombre"
       status: "Estado"
@@ -232,6 +234,17 @@ es:
         features: "Características"
       modals:
         mode_indicator: "Modo Superadmin"
+    payments:
+      subtitle: "Visualiza todas las transacciones e ingresos."
+      total_revenue: "Ingresos Totales"
+      no_payments: "No se encontraron pagos."
+      table:
+        date: "Fecha"
+        account: "Cuenta"
+        amount: "Monto"
+        status: "Estado"
+        invoice: "Factura"
+        view_invoice: "Ver Factura"
   onboarding:
     title: "Inicializa tu Organización"
     subtitle: "Define los parámetros de tu espacio de trabajo y detalles fiscales antes de empezar a orquestar tu contenido."
@@ -261,6 +274,11 @@ es:
       login_button: "Iniciar Sesión"
       signup_button: "Registrarse"
       success: "¡Bienvenido al equipo!"
+  not_found:
+    title: "404 - Página no encontrada"
+    subtitle: "Parece que te has perdido en el espacio profundo."
+    description: "La página que buscas no existe o ha sido movida a otra galaxia."
+    back_home: "Volver al inicio"
   mailer:
     layout:
       title: "Laniakea"

@@ -103,7 +103,7 @@ export default function PaymentsPage() {
                 ) : filteredPayments.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="h-24 text-center text-muted-foreground font-medium italic opacity-40 uppercase text-[10px] tracking-widest">
-                      {searchTerm ? "No results found." : t('superadmin.payments.no_payments')}
+                      {searchTerm ? t('superadmin.actions.search_no_results') || "No results found." : t('superadmin.payments.no_payments')}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -145,7 +145,7 @@ export default function PaymentsPage() {
                             className="inline-flex items-center gap-1.5 text-[10px] font-medium text-primary hover:text-primary/80 transition-colors bg-primary/5 hover:bg-primary/10 px-2.5 py-1 rounded-md border border-primary/10"
                           >
                             <FileText size={12} />
-                            View Invoice
+                            {t('superadmin.payments.table.view_invoice') || "View Invoice"}
                           </a>
                         )}
                       </TableCell>
