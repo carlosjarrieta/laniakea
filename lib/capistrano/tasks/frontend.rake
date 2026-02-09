@@ -59,6 +59,45 @@ namespace :frontend do
     invoke 'frontend:yarn_install'
     invoke 'frontend:build'
   end
+
+  namespace :systemd do
+    desc 'Setup frontend systemd service'
+    task :config do
+      on roles(:app) do
+        service_content = <<~SERVICE
+          [Unit]
+          Description=Laniakea Frontend (Next.js)
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=#{fetch(:user)}
+          WorkingDirectory=#{current_path}/frontend
+          Environment=NODE_ENV=production
+          ExecStart=/usr/bin/yarn start
+          Restart=always
+
+          [Install]
+          WantedBy=default.target
+        SERVICE
+
+        upload! StringIO.new(service_content), "/tmp/laniakea_frontend.service"
+        execute :mkdir, '-p', "~/.config/systemd/user"
+        execute :mv, "/tmp/laniakea_frontend.service", "~/.config/systemd/user/laniakea_frontend.service"
+        execute :"/bin/systemctl --user", :"daemon-reload"
+        execute :"/bin/systemctl --user", :enable, :laniakea_frontend
+      end
+    end
+
+    desc 'Restart frontend service'
+    task :restart do
+      on roles(:app) do
+        execute :"/bin/systemctl --user", :restart, :laniakea_frontend
+      end
+    end
+  end
 end
+
+after 'deploy:published', 'frontend:systemd:restart'
 
 after 'deploy:updated', 'frontend:deploy'
