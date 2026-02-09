@@ -69,8 +69,8 @@ namespace :frontend do
     desc 'Restart frontend service'
     task :restart do
       on roles(:app) do
-        # Esto solo reinicia el proceso, que es lo único que necesitas al desplegar
-        execute :"/bin/systemctl --user", :restart, :laniakea_frontend
+        # Usamos --no-pager para evitar que se quede colgado esperando input
+        execute :systemctl, '--user', '--no-pager', 'restart', 'laniakea_frontend'
       end
     end
   end

@@ -33,6 +33,9 @@ set :assets_roles, []
 # Puma configuration
 set :puma_systemctl_user, :user
 
+# Sidekiq configuration
+set :sidekiq_systemctl_user, :user
+
 
 # Nginx configuration
 set :nginx_frontend_domain, 'laniakea.tech'

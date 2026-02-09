@@ -1,4 +1,4 @@
-server "contabo.laniakea.tech", user: 'deploy', roles: %w[web app db], primary: 'true'
+server "contabo.laniakea.tech", user: 'deploy', roles: %w[web app db worker], primary: 'true'
 set :branch, 'main'
 set :stage, :production
 set :rails_env, :production
