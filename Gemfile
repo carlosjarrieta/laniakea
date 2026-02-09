@@ -42,6 +42,8 @@ group :development do
   gem 'capistrano3-nginx', '~> 3.0'
   gem 'capistrano-upload-config', '~> 0.9.0'
   gem 'capistrano-sidekiq'
+  gem 'ed25519', '~> 1.2'
+  gem 'bcrypt_pbkdf', '~> 1.1'
 end
 
 
