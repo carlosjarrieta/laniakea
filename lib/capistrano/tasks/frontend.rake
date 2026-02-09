@@ -34,7 +34,7 @@ namespace :frontend do
     on roles(:app) do
       within "#{release_path}/frontend" do
         info '📦 Installing frontend dependencies...'
-        execute :yarn, 'install'
+        execute :yarn, 'install', '--frozen-lockfile'
       end
     end
   end
@@ -43,8 +43,10 @@ namespace :frontend do
   task :build do
     on roles(:app) do
       within "#{release_path}/frontend" do
-        with node_env: :production do
-          info '🏗️  Building frontend...'
+        # Aumentamos el límite de memoria para Node ya que el VPS tiene 8GB
+        # También nos aseguramos de que se use el entorno de producción
+        with node_env: :production, node_options: "--max-old-space-size=4096" do
+          info '🏗️  Building frontend (Next.js)...'
           execute :yarn, 'build'
           info '✓ Frontend build completed'
         end
@@ -61,43 +63,19 @@ namespace :frontend do
   end
 
   namespace :systemd do
-    desc 'Setup frontend systemd service'
-    task :config do
-      on roles(:app) do
-        service_content = <<~SERVICE
-          [Unit]
-          Description=Laniakea Frontend (Next.js)
-          After=network.target
-
-          [Service]
-          Type=simple
-          User=#{fetch(:user)}
-          WorkingDirectory=#{current_path}/frontend
-          Environment=NODE_ENV=production
-          ExecStart=/usr/bin/yarn start
-          Restart=always
-
-          [Install]
-          WantedBy=default.target
-        SERVICE
-
-        upload! StringIO.new(service_content), "/tmp/laniakea_frontend.service"
-        execute :mkdir, '-p', "~/.config/systemd/user"
-        execute :mv, "/tmp/laniakea_frontend.service", "~/.config/systemd/user/laniakea_frontend.service"
-        execute :"/bin/systemctl --user", :"daemon-reload"
-        execute :"/bin/systemctl --user", :enable, :laniakea_frontend
-      end
-    end
+    # HE ELIMINADO LA TAREA 'config' QUE CAUSABA EL CONFLICTO
+    # Ya no intentará crear archivos de servicio ni pedir sudo.
 
     desc 'Restart frontend service'
     task :restart do
       on roles(:app) do
+        # Esto solo reinicia el proceso, que es lo único que necesitas al desplegar
         execute :"/bin/systemctl --user", :restart, :laniakea_frontend
       end
     end
   end
 end
 
+# Hooks
 after 'deploy:published', 'frontend:systemd:restart'
-
 after 'deploy:updated', 'frontend:deploy'
