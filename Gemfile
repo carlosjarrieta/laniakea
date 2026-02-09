@@ -38,7 +38,7 @@ group :development do
   gem 'capistrano-rails', require: false
   gem 'capistrano-rvm', github: 'capistrano/rvm', require: false
   gem 'capistrano-ssh-doctor', require: false
-  gem 'capistrano3-puma', '~> 5.2'
+  gem 'capistrano3-puma', '~> 7.1'
   gem 'capistrano3-nginx', '~> 3.0'
   gem 'capistrano-upload-config', '~> 0.9.0'
   gem 'capistrano-sidekiq'

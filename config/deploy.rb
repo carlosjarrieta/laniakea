@@ -31,7 +31,7 @@ set :puma_init_active_record, true
 set :assets_roles, []
 
 # Puma configuration
-set :puma_systemctl_user, :system
+set :puma_systemctl_user, :user
 
 
 # Nginx configuration
