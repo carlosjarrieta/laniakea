@@ -34,6 +34,10 @@ import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useTranslations } from "../../../hooks/use-translations";
+import { KpiCard } from "@/components/kpi-card";
+import { AdAdvisorCard } from "@/components/ad-advisor-card";
+import { AIContentForge } from "@/components/ai-content-forge";
+import { Users, TrendingUp } from "lucide-react";
 
 const performanceData = [
   { name: "Lun", value: 24828 },
@@ -187,45 +191,117 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 min-h-screen bg-transparent">
+    <div className="space-y-6 min-h-screen bg-transparent pb-10">
       
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">Hola, bienvenido de nuevo 👋</h2>
-          <p className="text-xs md:text-sm text-muted-foreground">Aquí tienes un resumen de tus campañas de hoy.</p>
+          <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground">{t('dashboard.welcome')}</h2>
+          <p className="text-xs md:text-sm text-muted-foreground">{t('dashboard.subtitle')}</p>
         </div>
-        {user?.has_active_plan && (
-          <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4 text-xs font-semibold gap-2 shadow-sm shrink-0">
-            <Plus size={14} strokeWidth={2.5} />
-            Nueva Campaña
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="h-9 px-4 text-xs font-semibold gap-2 border-border/60">
+            <BarChart className="h-4 w-4" />
+            {t('dashboard.view_roi_reports')}
           </Button>
-        )}
+          {user?.has_active_plan && (
+            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4 text-xs font-semibold gap-2 shadow-sm shrink-0">
+              <Plus size={14} strokeWidth={2.5} />
+              {t('dashboard.new_campaign')}
+            </Button>
+          )}
+        </div>
       </div>
 
-      {/* KPI Section */}
+      {/* AI Content Forge - TOP PRIORITY FEATURE */}
+      <AIContentForge />
+
+      {/* KPI Section - Real Business Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { title: "Ingresos totales", value: "$1,250.00", trend: "+12.5%", trendUp: true, desc: "En alza este mes", sub: "Variantes de los últimos 6 meses" },
-          { title: "Nuevos Clientes", value: "1,234", trend: "-2.0%", trendUp: false, desc: "Disminuyó 2.0% en este periodo", sub: "La adquisición necesita atención" },
-          { title: "Cuentas activas", value: "45,678", trend: "+12.5%", trendUp: true, desc: "Fuerte retención de usuarios", sub: "El compromiso supera los objetivos" },
-          { title: "Tasa de crecimiento", value: "4.5%", trend: "+4.5%", trendUp: true, desc: "Incremento de desempeño constante", sub: "Cumple con las proyecciones de crecimiento" }
-        ].map((kpi, i) => (
-          <Card key={i} className="shadow-sm border-border/40 rounded-xl bg-card/50">
-            <CardContent className="p-4 md:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-muted-foreground">{kpi.title}</span>
-                <span className={cn("text-xs font-bold flex items-center gap-1 bg-muted/50 px-2 py-0.5 rounded-full", kpi.trendUp ? "text-emerald-600" : "text-rose-600")}>
-                  {kpi.trendUp ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />} {kpi.trend}
-                </span>
-              </div>
-              <div className="text-3xl font-bold mb-1">{kpi.value}</div>
-              <p className="text-sm font-medium mt-4 flex items-center gap-1">
-                 {kpi.desc} {kpi.trendUp ? <ArrowUpRight size={14} className="text-muted-foreground/70" /> : <ArrowDownRight size={14} className="text-muted-foreground/70" />}
-              </p>
-              <p className="text-xs text-muted-foreground/70 mt-1">{kpi.sub}</p>
-            </CardContent>
-          </Card>
-        ))}
+        <KpiCard 
+          title={t('dashboard.kpis.total_revenue')} 
+          value="$12,450.00" 
+          trend="+18.2%" 
+          trendUp={true} 
+          description={t('dashboard.kpi_descriptions.revenue')}
+          subDescription={t('dashboard.kpi_descriptions.revenue_sub')}
+          icon={RocketIcon}
+        />
+        <KpiCard 
+          title={t('dashboard.kpis.new_customers')} 
+          value="842" 
+          trend="+5.4%" 
+          trendUp={true} 
+          description={t('dashboard.kpi_descriptions.customers')}
+          subDescription={t('dashboard.kpi_descriptions.customers_sub', { cpa: "$14.50" })}
+          icon={Users}
+        />
+        <KpiCard 
+          title={t('dashboard.kpis.active_accounts')} 
+          value="1.2M" 
+          trend="-2.1%" 
+          trendUp={false} 
+          description={t('dashboard.kpi_descriptions.reach')}
+          subDescription={t('dashboard.kpi_descriptions.reach_sub', { freq: "2.4" })}
+          icon={TrendingUp}
+        />
+        <KpiCard 
+          title={t('dashboard.kpis.growth_rate')} 
+          value="4.2x" 
+          trend="+0.8x" 
+          trendUp={true} 
+          description={t('dashboard.kpi_descriptions.growth')}
+          subDescription={t('dashboard.kpi_descriptions.growth_sub', { target: "5.0x" })}
+          icon={ArrowUpRight}
+        />
+      </div>
+
+      {/* Smart Ads Advisor Section - THE DIFFERENTIATOR */}
+      <div className="space-y-4">
+        <div className="flex items-end justify-between">
+          <div>
+            <h3 className="text-lg font-bold tracking-tight flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <RocketIcon size={14} />
+              </span>
+              {t('dashboard.ad_advisor.title')}
+            </h3>
+            <p className="text-xs text-muted-foreground">{t('dashboard.ad_advisor.subtitle')}</p>
+          </div>
+          <Button variant="link" className="text-primary text-xs font-bold p-0 h-auto">
+            Ver todas las oportunidades
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <AdAdvisorCard 
+            postTitle="Lanzamiento Colección Verano"
+            platform="instagram"
+            engagementRate="45%"
+            projectedRoi="3.8x"
+            estimatedReach="15k - 25k"
+          />
+          <AdAdvisorCard 
+            postTitle="Tips de productividad con IA"
+            platform="linkedin"
+            engagementRate="22%"
+            projectedRoi="5.2x"
+            estimatedReach="5k - 8k"
+          />
+          <AdAdvisorCard 
+            postTitle="Review: Nueva plataforma Laniakea"
+            platform="tiktok"
+            engagementRate="68%"
+            projectedRoi="2.5x"
+            estimatedReach="50k - 80k"
+          />
+          <AdAdvisorCard 
+            postTitle="Promoción Webinar de Ventas"
+            platform="facebook"
+            engagementRate="12%"
+            projectedRoi="4.1x"
+            estimatedReach="10k - 18k"
+          />
+        </div>
       </div>
 
       {/* Grid: 2 columns (Chart 70% | List 30%) */}
@@ -235,17 +311,17 @@ export default function DashboardPage() {
           <CardContent className="p-4 md:p-6">
             <div className="flex items-start justify-between mb-6">
               <div>
-                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de barras - Interactiva</h3>
-                <p className="text-xs text-muted-foreground">Total de los últimos 3 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">{t('dashboard.metrics.performance_chart')}</h3>
+                <p className="text-xs text-muted-foreground">{t('dashboard.metrics.total_3_months')}</p>
               </div>
               <div className="flex bg-muted/30 rounded-lg p-1 border border-border/40">
-                <div className="bg-white dark:bg-zinc-800 shadow-sm rounded-md px-4 py-2 text-right border border-border/20">
-                  <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">Escritorio</span>
+                <div className="bg-background shadow-sm rounded-md px-4 py-2 text-right border border-border/20">
+                  <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">{t('dashboard.metrics.organic')}</span>
                   <span className="text-lg font-bold">24,828</span>
                 </div>
                 <div className="px-4 py-2 text-right opacity-50">
-                   <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">Móvil</span>
-                   <span className="text-lg font-bold">25,010</span>
+                   <span className="text-[10px] text-muted-foreground/70 block uppercase tracking-wider">{t('dashboard.metrics.paid_ads')}</span>
+                   <span className="text-lg font-bold">58,010</span>
                 </div>
               </div>
             </div>
@@ -276,11 +352,11 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        {/* Recent Sales List */}
+        {/* Recent Conversions - Focus on Money, not just sales */}
         <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
           <CardContent className="p-4 md:p-6">
-            <h3 className="text-sm font-semibold text-foreground mb-1">Ventas recientes</h3>
-            <p className="text-xs text-muted-foreground mb-6">Realizaste 265 ventas este mes</p>
+            <h3 className="text-sm font-semibold text-foreground mb-1">{t('dashboard.recent_conversions')}</h3>
+            <p className="text-xs text-muted-foreground mb-6">{t('dashboard.direct_attributions', { count: 24 })}</p>
             <div className="space-y-6">
               {recentSales.map((sale, i) => (
                 <div key={i} className="flex items-center justify-between">
@@ -291,25 +367,35 @@ export default function DashboardPage() {
                     </Avatar>
                     <div>
                       <p className="text-sm font-medium leading-none">{sale.name}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{sale.email}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Vía {i % 2 === 0 ? 'Facebook Ads' : 'Instagram Organic'}</p>
                     </div>
                   </div>
-                  <div className="font-bold text-sm">{sale.amount}</div>
+                  <div className="text-right">
+                    <div className="font-bold text-sm">{sale.amount}</div>
+                    <div className="text-[10px] text-emerald-600 font-bold uppercase">ROI: 4.2x</div>
+                  </div>
                 </div>
               ))}
             </div>
+            <Button variant="outline" className="w-full mt-6 h-8 text-xs border-dashed border-border/60 hover:bg-muted/50">
+              {t('dashboard.view_full_history')}
+            </Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* Bottom Charts */}
+      <div className="space-y-4 pt-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-bold tracking-tight px-1">{t('dashboard.audience_analysis')}</h3>
+        </div>
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
          {/* Area Chart */}
          <Card className="lg:col-span-2 shadow-sm border-border/40 rounded-xl bg-card/50">
           <CardContent className="p-4 md:p-6">
              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de áreas - apilada</h3>
-                <p className="text-xs text-muted-foreground">Muestra visitantes totales de los últimos 6 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">{t('dashboard.metrics.reach_chart')}</h3>
+                <p className="text-xs text-muted-foreground">{t('dashboard.metrics.visitors_6_months')}</p>
              </div>
              <div className="h-[250px] w-full">
                <ResponsiveContainer width="100%" height="100%">
@@ -341,7 +427,7 @@ export default function DashboardPage() {
              </div>
              <div className="mt-4 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
-                   <span>En aumento 5.2% este mes</span>
+                   <span>{t('dashboard.metrics.increasing', { percent: "5.2%" })}</span>
                    <ArrowUpRight size={12} className="text-emerald-500" />
                 </div>
                 <div>Enero - Junio 2024</div>
@@ -353,14 +439,14 @@ export default function DashboardPage() {
          <Card className="shadow-sm border-border/40 rounded-xl bg-card/50">
           <CardContent className="p-4 md:p-6 h-full flex flex-col">
              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-foreground mb-1">Gráfica de pastel - dona con texto</h3>
-                <p className="text-xs text-muted-foreground">Visitantes totales por navegador de los últimos 6 meses</p>
+                <h3 className="text-sm font-semibold text-foreground mb-1">{t('dashboard.metrics.distribution')}</h3>
+                <p className="text-xs text-muted-foreground">{t('dashboard.metrics.visitors_distribution')}</p>
              </div>
              
              <div className="flex-1 flex items-center justify-center relative">
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                   <span className="text-3xl font-bold tracking-tighter">1,125</span>
-                   <span className="text-[10px] text-muted-foreground uppercase tracking-wide">Visitantes</span>
+                   <span className="text-3xl font-bold tracking-tighter">1.2M</span>
+                   <span className="text-[10px] text-muted-foreground uppercase tracking-wide">{t('dashboard.metrics.impressions')}</span>
                 </div>
                 <div className="h-[200px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -384,13 +470,10 @@ export default function DashboardPage() {
                 </div>
              </div>
 
-             <div className="mt-auto pt-4 text-center">
+             <div className="mt-auto pt-4 text-center border-t border-border/10">
                 <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground mb-1">
-                   Chrome lidera con <span className="font-bold text-foreground">24.4%</span>
+                   {t('dashboard.metrics.social_leader', { platform: "Instagram", percent: "64.4%" })}
                    <ArrowUpRight size={12} className="text-emerald-500" />
-                </div>
-                <div className="text-[10px] text-muted-foreground/70">
-                   Basado en datos de enero a junio de 2024
                 </div>
              </div>
           </CardContent>

@@ -27,3 +27,6 @@
 .vscode/
 .idea/
 .DS_Store
+
+# Laniakea Strategic Docs
+.laniakea_docs/

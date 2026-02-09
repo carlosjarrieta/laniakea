@@ -5,24 +5,19 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
-  ShoppingCart, 
   Users, 
-  Package, 
-  Truck, 
   CreditCard,
-  Archive,
-  ArrowRightLeft,
-  ShoppingBag,
-  Store,
-  Tag,
   Settings,
   Shield,
   Building2,
   LogOut,
   User,
-  Box,
-  Wallet,
-  Rocket
+  Rocket,
+  Sparkles,
+  Target,
+  Megaphone,
+  BarChart3,
+  Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -56,42 +51,24 @@ export function Sidebar() {
       label: t('sidebar.main_menu'),
       items: [
         { label: t('sidebar.dashboard'), icon: LayoutDashboard, href: "/dashboard" },
+        { label: t('sidebar.content_forge'), icon: Sparkles, href: "/forge" },
+        { label: t('sidebar.ad_advisor'), icon: Target, href: "/advisor" },
       ]
     },
     {
-      label: t('sidebar.operation'),
+      label: t('sidebar.management'),
       items: [
-        { label: t('sidebar.sales'), icon: ShoppingCart, href: "/sales" },
-        { label: t('sidebar.attendance'), icon: Users, href: "/attendance" },
-        { label: t('sidebar.dispatches'), icon: Truck, href: "/dispatches" },
-        { label: t('sidebar.payments'), icon: CreditCard, href: "/payments" },
+        { label: t('sidebar.campaigns'), icon: Megaphone, href: "/campaigns" },
+        { label: t('sidebar.social_profiles'), icon: Globe, href: "/profiles" },
+        { label: t('sidebar.analytics'), icon: BarChart3, href: "/analytics" },
       ]
     },
     {
-      label: t('sidebar.inventory'),
+      label: t('sidebar.configuration'),
       items: [
-        { label: t('sidebar.stock'), icon: Box, href: "/stock" },
-        { label: t('sidebar.warehouses'), icon: Archive, href: "/warehouses" },
-        { label: t('sidebar.transfers'), icon: ArrowRightLeft, href: "/transfers" },
-        { label: t('sidebar.purchases'), icon: ShoppingBag, href: "/purchases" },
-        { label: t('sidebar.clients'), icon: Users, href: "/clients" },
-        { label: t('sidebar.suppliers'), icon: Truck, href: "/suppliers" },
-      ]
-    },
-    {
-      label: t('sidebar.catalog'),
-      items: [
-        { label: t('sidebar.products'), icon: Tag, href: "/products" },
-        { label: t('sidebar.categories'), icon: Box, href: "/categories" },
-      ]
-    },
-    {
-      label: t('sidebar.administration'),
-      items: [
-        { label: t('sidebar.registers'), icon: Wallet, href: "/registers" },
-        { label: t('sidebar.properties'), icon: Store, href: "/properties" },
-        { label: t('sidebar.roles'), icon: Shield, href: "/roles" },
-        { label: t('sidebar.company'), icon: Building2, href: "/company" },
+        { label: t('sidebar.organization'), icon: Building2, href: "/settings/organization" },
+        { label: t('sidebar.team'), icon: Users, href: "/settings/team" },
+        { label: t('sidebar.billing'), icon: CreditCard, href: "/settings/billing" },
       ]
     }
   ];
