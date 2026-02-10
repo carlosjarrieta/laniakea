@@ -205,7 +205,7 @@ export default function DashboardPage() {
           </Button>
           {user?.has_active_plan && (
             <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground h-9 px-4 text-xs font-semibold gap-2 shadow-sm shrink-0">
-              <Plus size={14} strokeWidth={2.5} />
+              <RocketIcon size={14} strokeWidth={2.5} />
               {t('dashboard.new_campaign')}
             </Button>
           )}

@@ -102,7 +102,7 @@ export function Sidebar() {
         )}
       >
         <div className={cn(
-          "h-14 flex items-center px-4 mb-2 border-b dark:border-zinc-800/50",
+          "h-16 flex items-center px-4 border-b dark:border-zinc-800/50",
           collapsed ? "justify-center" : "gap-3"
         )}>
           <div className="flex items-center justify-center w-8 h-8 bg-violet-100 dark:bg-violet-900/40 text-violet-700 dark:text-violet-400 rounded-md shrink-0">
