@@ -17,6 +17,7 @@ export const campaignsRoutes = {
 export const campaignPostsRoutes = {
   update: (id: number, version?: string) => withApi(`campaign_posts/${id}`, version),
   delete: (id: number, version?: string) => withApi(`campaign_posts/${id}`, version),
+  publish: (id: number, version?: string) => withApi(`campaign_posts/${id}/publish`, version),
 };
 
 export const integrationsRoutes = {
@@ -24,7 +25,11 @@ export const integrationsRoutes = {
   disconnect: (id: number, version?: string) => withApi(`integrations/${id}`, version),
   facebookConnect: (version?: string) => withApi('integrations/facebook', version),
   facebookPages: (version?: string) => withApi('integrations/facebook_pages', version),
-  // Permite vincular varias cuentas de Facebook y consultar fanpages
+  facebookAuthUrl: (token: string, version?: string) => {
+    const base = (process.env.NEXT_PUBLIC_FACEBOOK_AUTH_URL || API_BASE).replace(/\/$/, '');
+    const ver = version || DEFAULT_API_VERSION;
+    return `${base}/api/${ver}/facebook/auth_url?token=${token}`;
+  },
 };
 
 export const endpoints = {

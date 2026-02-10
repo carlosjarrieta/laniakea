@@ -26,6 +26,38 @@ class CampaignPost < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_url(image, Rails.application.config.action_controller.default_url_options)
   end
 
+  def publish_to_facebook!(page_id, page_access_token)
+    return false unless facebook?
+    
+    graph = Koala::Facebook::API.new(page_access_token)
+    
+    if image.attached?
+      # Subimos el archivo directamente. Usamos el blob para obtener el content_type 
+      # y asegurar que Facebook lo acepte correctamente.
+      result = image.open do |file|
+        graph.put_picture(file, { 
+          message: content, 
+          content_type: image.blob.content_type 
+        }, page_id)
+      end
+    else
+      # Publicar solo texto
+      result = graph.put_connections(page_id, 'feed', message: content)
+    end
+
+    if result['id']
+      update!(status: :published, metadata: (metadata || {}).merge(facebook_post_id: result['id'], published_at: Time.current))
+      true
+    else
+      update!(status: :failed)
+      false
+    end
+  rescue => e
+    Rails.logger.error "FACEBOOK PUBLISH ERROR: #{e.message}"
+    update!(status: :failed, metadata: (metadata || {}).merge(last_error: e.message))
+    raise e
+  end
+
   private
 
   def download_image_from_url

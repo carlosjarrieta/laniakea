@@ -18,7 +18,10 @@ import {
   MoreHorizontal,
   Calendar,
   Layers,
-  Loader2
+  Loader2,
+  Facebook,
+  ExternalLink,
+  CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -31,9 +34,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FacebookConnect } from "@/components/facebook-connect";
+import { FacebookPageSelector } from "@/components/facebook-page-selector";
 
 import { useCampaigns } from "@/hooks/use-campaigns";
-// ... (imports)
 
 export default function CampaignDetailPage() {
   const params = useParams();
@@ -47,6 +50,9 @@ export default function CampaignDetailPage() {
     description: "",
     status: ""
   });
+
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [isSelectorOpen, setIsSelectorOpen] = useState(false);
 
   const { locale } = useLanguage();
   const { t } = useTranslations(locale);
@@ -99,6 +105,11 @@ export default function CampaignDetailPage() {
      } finally {
        setSaving(false);
      }
+  };
+
+  const openPublishSelector = (postId: number) => {
+    setSelectedPostId(postId);
+    setIsSelectorOpen(true);
   };
 
   if (loading) {
@@ -214,7 +225,7 @@ export default function CampaignDetailPage() {
             {campaign.campaign_posts && campaign.campaign_posts.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {campaign.campaign_posts.map((post) => (
-                  <Card key={post.id} className="overflow-hidden group hover:border-primary/40 transition-colors">
+                  <Card key={post.id} className="overflow-hidden group hover:border-primary/40 transition-colors flex flex-col">
                     <div className="aspect-video w-full bg-muted/20 relative">
                       {post.real_image_url || post.image_url ? (
                         <img 
@@ -233,16 +244,50 @@ export default function CampaignDetailPage() {
                           {post.platform}
                         </Badge>
                       </div>
+
+                      {post.status === 'published' && !!post.metadata?.facebook_post_id && (
+                        <div className="absolute top-2 right-2">
+                          <Badge className="bg-emerald-500 text-white border-none gap-1 py-0.5 h-auto text-[8px]">
+                            <CheckCircle2 size={8} /> Publicado
+                          </Badge>
+                        </div>
+                      )}
                     </div>
-                    <CardContent className="p-3 space-y-2">
-                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+                    <CardContent className="p-3 space-y-3 flex-grow flex flex-col">
+                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed flex-grow">
                         {post.content}
                       </p>
-                      <div className="flex items-center justify-between pt-2 border-t border-border/10">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase">{post.status}</span>
-                        <span className="text-[10px] text-muted-foreground font-medium">
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </span>
+                      
+                      <div className="pt-2 border-t border-border/10">
+                        {post.platform === 'facebook' && post.status !== 'published' ? (
+                          <Button 
+                            className="w-full h-8 text-[10px] font-bold bg-blue-600 hover:bg-blue-700 gap-2 shadow-sm"
+                            onClick={() => openPublishSelector(post.id)}
+                          >
+                            <Facebook size={12} />
+                            PUBLICAR EN FACEBOOK
+                          </Button>
+                        ) : post.status === 'published' ? (
+                          <div className="flex items-center justify-between">
+                             <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1">
+                               <CheckCircle2 size={10} /> Publicado con Éxito
+                             </span>
+                             {!!post.metadata?.facebook_post_id && (
+                               <Button variant="ghost" size="sm" className="h-6 text-[8px] gap-1 px-1.5" asChild>
+                                 <a href={`https://facebook.com/${post.metadata?.facebook_post_id as string}`} target="_blank" rel="noopener noreferrer">
+                                   Ver Post <ExternalLink size={8} />
+                                 </a>
+                               </Button>
+                             )}
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-between opacity-50">
+                            <span className="text-[10px] font-bold text-muted-foreground uppercase">{post.status}</span>
+                            <span className="text-[10px] text-muted-foreground font-medium">
+                              {new Date(post.created_at).toLocaleDateString()}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -289,6 +334,15 @@ export default function CampaignDetailPage() {
            </Card>
         </div>
       </div>
+
+      {selectedPostId && (
+        <FacebookPageSelector 
+          postId={selectedPostId}
+          isOpen={isSelectorOpen}
+          onOpenChange={setIsSelectorOpen}
+          onSuccess={loadCampaign}
+        />
+      )}
     </div>
   );
 }

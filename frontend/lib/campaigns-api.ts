@@ -75,5 +75,13 @@ export const campaignPostsApi = {
 
   delete: async (id: number) => {
     await api.delete(endpoints.campaignPosts.delete(id));
+  },
+
+  publish: async (id: number, pageId: string, pageAccessToken: string) => {
+    const response = await api.post(endpoints.campaignPosts.publish(id), {
+      page_id: pageId,
+      page_access_token: pageAccessToken
+    });
+    return response.data;
   }
 };

@@ -4,7 +4,11 @@ Rails.application.routes.draw do
       resources :campaigns do
         resources :campaign_posts, only: [:index, :create]
       end
-      resources :campaign_posts, only: [:update, :destroy]
+      resources :campaign_posts, only: [:update, :destroy] do
+        member do
+          post :publish
+        end
+      end
       resources :integrations, only: [:index, :destroy] do
         collection do
           get :facebook_pages

@@ -2,11 +2,33 @@ class Api::V1::CampaignPostsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_account
   before_action :set_campaign, only: [:index, :create]
-  before_action :set_post, only: [:update, :destroy]
+  before_action :set_post, only: [:update, :destroy, :publish]
 
   def index
     @posts = @campaign.campaign_posts.order(created_at: :desc)
     render json: @posts
+  end
+
+  def publish
+    case @post.platform
+    when 'facebook'
+      page_id = params[:page_id]
+      page_access_token = params[:page_access_token]
+
+      if page_id.present? && page_access_token.present?
+        if @post.publish_to_facebook!(page_id, page_access_token)
+          render json: { message: 'Publicado exitosamente', post: @post }
+        else
+          render json: { error: 'Fallo al publicar' }, status: :unprocessable_entity
+        end
+      else
+        render json: { error: 'Faltan parámetros de la página' }, status: :bad_request
+      end
+    else
+      render json: { error: "Plataforma #{@post.platform} no soportada aún para publicación directa" }, status: :bad_request
+    end
+  rescue => e
+    render json: { error: e.message }, status: :internal_server_error
   end
 
   def create

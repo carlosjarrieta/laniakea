@@ -1,4 +1,5 @@
 import api from './api';
+import endpoints from './apiRoutes';
 
 export interface ConnectedAccount {
   id: number;
@@ -12,26 +13,27 @@ export interface IntegrationsResponse {
   integrations: ConnectedAccount[];
 }
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-
 export const integrationsApi = {
   // Get all connected integrations
   getIntegrations: async (): Promise<IntegrationsResponse> => {
-    const response = await api.get('/api/v1/integrations');
+    const response = await api.get(endpoints.integrations.list());
     return response.data;
   },
 
   // Disconnect an integration
   disconnectIntegration: async (id: number): Promise<void> => {
-    await api.delete(`/api/v1/integrations/${id}`);
+    await api.delete(endpoints.integrations.disconnect(id));
   },
 
   // Build the Facebook auth URL (browser navigation, not AJAX)
-  // The backend receives the JWT as a query param, saves user_id in session,
-  // then redirects to Facebook. This ensures session cookies persist.
-  // Uses ngrok URL so Facebook gets an HTTPS callback URL
+  // Uses apiRoutes to construct the correct URL (handling ngrok if needed)
   getFacebookAuthUrl: (token: string): string => {
-    const fbAuthBase = process.env.NEXT_PUBLIC_FACEBOOK_AUTH_URL || API_URL;
-    return `${fbAuthBase}/api/v1/facebook/auth_url?token=${token}`;
+    return endpoints.integrations.facebookAuthUrl(token);
+  },
+
+  // Get managed Facebook pages
+  getFacebookPages: async (): Promise<{ pages: any[] }> => {
+    const response = await api.get(endpoints.integrations.facebookPages());
+    return response.data;
   },
 };

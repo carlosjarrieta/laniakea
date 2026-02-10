@@ -25,7 +25,8 @@ class Api::V1::IntegrationsController < ApplicationController
 
     # Usamos la gema Koala para hablar con Facebook
     @graph = Koala::Facebook::API.new(account.access_token)
-    pages = @graph.get_connections("me", "accounts")
+    # Pedimos explícitamente el campo 'picture' para mostrarlo en el frontend
+    pages = @graph.get_connections("me", "accounts", fields: 'name,access_token,picture,id,tasks')
     
     render json: { pages: pages }
   rescue => e

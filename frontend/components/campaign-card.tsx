@@ -150,7 +150,7 @@ export function CampaignCard({ campaign, onDelete }: CampaignCardProps) {
             </div>
           </div>
           
-          <Link href={`/dashboard?campaign_id=${campaign.id}`} className="text-[9px] font-bold text-primary hover:underline">
+          <Link href={`/campaigns/${campaign.id}`} className="text-[9px] font-bold text-primary hover:underline">
             Gestionar
           </Link>
         </div>

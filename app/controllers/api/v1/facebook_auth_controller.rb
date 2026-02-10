@@ -35,11 +35,21 @@ module Api
         session[:facebook_oauth_state] = state
         session[:facebook_linking_user_id] = user.id
         
+        # Scopes completos ahora que están habilitados en el portal de developers
+        # Removemos 'email' ya que parece estar bloqueado en el App Type actual
+        permissions = [
+          'public_profile',
+          'pages_show_list',
+          'pages_manage_posts',
+          'pages_read_engagement'
+        ].join(',')
+        
         fb_url = "https://www.facebook.com/v19.0/dialog/oauth?" + {
           client_id: ENV['FACEBOOK_APP_ID'],
           redirect_uri: callback_url,
-          scope: 'public_profile',
-          state: state
+          scope: permissions,
+          state: state,
+          response_type: 'code'
         }.to_query
         
         redirect_to fb_url, allow_other_host: true
