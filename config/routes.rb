@@ -50,6 +50,10 @@ Rails.application.routes.draw do
   post 'onboarding', to: 'onboarding#create'
   post 'webhooks/stripe', to: 'webhooks#stripe'
 
+  namespace :ai do
+    post :forge, to: 'generator#forge'
+  end
+
 
   resources :locales, only: [:show], constraints: { id: /en|es/ }
 

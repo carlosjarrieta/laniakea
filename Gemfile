@@ -25,6 +25,9 @@ gem "cancancan", "~> 3.6"
 gem "devise", "~> 5.0"
 gem "devise-jwt", "~> 0.13.0"
 
+# AI tools
+gem 'gemini-ai'
+
 
 group :development, :test do
   gem "letter_opener", "~> 1.10"
@@ -45,9 +48,3 @@ group :development do
   gem 'ed25519', '~> 1.2'
   gem 'bcrypt_pbkdf', '~> 1.1'
 end
-
-
-
-
-
-
