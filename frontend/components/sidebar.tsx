@@ -69,6 +69,7 @@ export function Sidebar() {
         { label: t('sidebar.organization'), icon: Building2, href: "/settings/organization" },
         { label: t('sidebar.team'), icon: Users, href: "/settings/team" },
         { label: t('sidebar.billing'), icon: CreditCard, href: "/settings/billing" },
+        { label: "Integraciones", icon: Globe, href: "/integrations" },
       ]
     }
   ];

@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslations } from "@/hooks/use-translations";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface Membership {
   id: number;
@@ -44,6 +45,7 @@ export default function TeamSettingsPage() {
     email: "",
     role: "member"
   });
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchTeam();
@@ -77,11 +79,12 @@ export default function TeamSettingsPage() {
     }
   };
 
-  const removeMember = async (id: number) => {
-    if (!confirm(t('settings.team.messages.remove_confirm'))) return;
+  const removeMember = async () => {
+    if (!deleteId) return;
     try {
-      await api.delete(`/memberships/${id}`);
+      await api.delete(`/memberships/${deleteId}`);
       toast.success(t('settings.team.messages.remove_success'));
+      setDeleteId(null);
       fetchTeam();
     } catch (error) {
       toast.error(t('settings.team.messages.remove_error'));
@@ -228,7 +231,7 @@ export default function TeamSettingsPage() {
                               <Button 
                                 variant="ghost" 
                                 size="icon" 
-                                onClick={() => removeMember(m.id)}
+                                onClick={() => setDeleteId(m.id)}
                                 className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-all hover:bg-destructive/10 hover:text-destructive rounded-lg"
                               >
                                 <Trash2 size={14} />
@@ -304,6 +307,17 @@ export default function TeamSettingsPage() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={deleteId !== null}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title={t('settings.team.messages.remove_confirm_title') || "¿Eliminar miembro?"}
+        description={t('settings.team.messages.remove_confirm') || "Esta acción revocará el acceso del usuario a esta cuenta. Podrás volver a invitarlo más tarde."}
+        confirmText={t('settings.team.actions.remove') || "Eliminar"}
+        cancelText={t('superadmin.actions.cancel') || "Cancelar"}
+        variant="destructive"
+        onConfirm={removeMember}
+      />
     </div>
   );
 }

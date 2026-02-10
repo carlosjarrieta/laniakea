@@ -224,6 +224,12 @@ className="h-9 focus-visible:ring-4 focus-visible:ring-primary"
 </TooltipProvider>
 ```
 
+### 🚫 Diálogos Nativos (PROHIBIDO)
+**CRÍTICO: NUNCA usar `alert()`, `confirm()` o `prompt()` nativos del navegador.**
+1.  **Estética**: Los diálogos nativos rompen la atmósfera premium y el diseño "glassmorphism" de la aplicación.
+2.  **Alternativa**: Usar siempre el componente `@/components/confirm-dialog` para acciones críticas o el `AlertDialog` de shadcn/ui.
+3.  **Notificaciones**: Para alertas informativas rápidas, usar exclusivamente `toast` de la librería `sonner`.
+
 **OBLIGATORIO: Nunca hardcodear textos en componentes.**
 
 ### Reglas de Traducción:

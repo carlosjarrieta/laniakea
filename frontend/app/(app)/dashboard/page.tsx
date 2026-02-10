@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {
   ArrowUpRight,
   ArrowDownRight
@@ -377,9 +378,11 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-            <Button variant="outline" className="w-full mt-6 h-8 text-xs border-dashed border-border/60 hover:bg-muted/50">
-              {t('dashboard.view_full_history')}
-            </Button>
+            <Link href="/campaigns">
+              <Button variant="outline" className="w-full mt-6 h-8 text-xs border-dashed border-border/60 hover:bg-muted/50">
+                {t('dashboard.view_full_history')}
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>

@@ -1,16 +1,34 @@
 Rails.application.routes.draw do
+  namespace :api do
+    namespace :v1 do
+      resources :campaigns do
+        resources :campaign_posts, only: [:index, :create]
+      end
+      resources :campaign_posts, only: [:update, :destroy]
+      resources :integrations, only: [:index, :destroy] do
+        collection do
+          get :facebook_pages
+        end
+      end
+      
+      
+      # Facebook Auth directo (sin OmniAuth)
+      get 'facebook/auth_url', to: 'facebook_auth#auth_url'
+      get 'facebook/callback', to: 'facebook_auth#callback'
+    end
+  end
   mount ActionCable.server => '/cable'
   
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
-    sign_out: 'logout',
     registration: 'signup'
   },
   controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
     passwords: 'users/passwords',
-    confirmations: 'users/confirmations'
+    confirmations: 'users/confirmations',
+    omniauth_callbacks: 'users/omniauth_callbacks'
   }
 
   namespace :users do

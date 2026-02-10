@@ -217,6 +217,9 @@ en:
         placeholder: "Write your post content here..."
         clean: "Clean"
         add_media: "Add Media"
+        save: "Save to Campaign"
+        saving: "Saving..."
+        save_post: "Save Post"
       features:
         copy: "Multi-network Copy"
         creatives: "Creatives"
@@ -224,6 +227,24 @@ en:
         copy_desc: "AI Optimized"
         creatives_desc: "DALL-E 3 Ready"
         video_desc: "AI Gen-Video"
+    campaigns:
+      name: "Name"
+      description: "Description"
+      status: "Status"
+      created: "Campaign created successfully."
+      updated: "Campaign updated successfully."
+      destroyed: "Campaign deleted successfully."
+      platforms:
+        linkedin: "LinkedIn"
+        facebook: "Facebook"
+        x: "X (Twitter)"
+        instagram: "Instagram"
+        tiktok: "TikTok"
+        multi: "Multi-channel"
+      states:
+        draft: "Draft"
+        active: "Active"
+        archived: "Archived"
     metrics:
       performance_chart: "Campaign Performance"
       reach_chart: "Organic vs Paid Reach"

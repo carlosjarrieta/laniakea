@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Pagy::Backend
   around_action :set_time_zone, if: :current_user
   around_action :set_locale, if: :current_user
 

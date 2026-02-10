@@ -42,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -72,6 +73,7 @@ export default function PlansPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<any>(null);
   const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>('monthly');
+  const [planToDelete, setPlanToDelete] = useState<number | null>(null);
 
   const form = useForm<PlanFormValues>({
     resolver: zodResolver(planSchema),
@@ -581,9 +583,7 @@ export default function PlansPage() {
                     variant="ghost" 
                     size="icon" 
                     className="h-8 w-8 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/5"
-                    onClick={() => {
-                      if (confirm("Are you sure?")) deletePlan(plan.id);
-                    }}
+                    onClick={() => setPlanToDelete(plan.id)}
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -592,6 +592,22 @@ export default function PlansPage() {
             </Card>
           ))}
         </div>
+
+        <ConfirmDialog
+          isOpen={planToDelete !== null}
+          onOpenChange={(open) => !open && setPlanToDelete(null)}
+          title={t('superadmin.plans.delete_title') || "¿Eliminar Plan?"}
+          description={t('superadmin.plans.delete_desc') || "Esta acción es irreversible y podría afectar a los usuarios suscritos a este plan. ¿Deseas continuar?"}
+          confirmText={t('superadmin.actions.delete') || "Eliminar"}
+          cancelText={t('superadmin.actions.cancel') || "Cancelar"}
+          variant="destructive"
+          onConfirm={() => {
+            if (planToDelete) {
+              deletePlan(planToDelete);
+              setPlanToDelete(null);
+            }
+          }}
+        />
       </div>
     </TooltipProvider>
   );

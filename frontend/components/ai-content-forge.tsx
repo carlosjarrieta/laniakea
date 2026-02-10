@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Image as ImageIcon, Video, Wand2, RefreshCw, Paperclip, X } from "lucide-react";
+import { Sparkles, Image as ImageIcon, Video, Wand2, RefreshCw, Paperclip, X, Save, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useTranslations } from "@/hooks/use-translations";
@@ -19,20 +19,20 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Edit3 } from "lucide-react";
+import { toast } from "sonner";
+import { campaignsApi, campaignPostsApi } from "@/lib/campaigns-api";
 
 import api from "@/lib/api";
 
 const AI_MODELS = [
   { id: 'gemini', name: 'Gemini 1.5 Flash', provider: 'Google', icon: '✨' },
-  // { id: 'gemini-pro', name: 'Gemini 1.5 Pro', provider: 'Google', icon: '🧠' },
   { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', icon: '🤖' },
-  // { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI', icon: '⚡' },
-  // { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI', icon: '☁️' },
 ];
 
 export function AIContentForge() {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [selectedModel, setSelectedModel] = useState("gemini");
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -77,8 +77,83 @@ export function AIContentForge() {
       setResult(response.data);
     } catch (error) {
       console.error("Error forging campaign:", error);
+      toast.error("Error al forjar la campaña");
     } finally {
       setIsGenerating(false);
+    }
+  };
+
+  const saveAICampaign = async () => {
+    if (!result) return;
+    setIsSaving(true);
+    try {
+      // 1. Crear la campaña
+      const campaign = await campaignsApi.create({
+        name: result.campaign_name,
+        description: prompt,
+        status: 'draft',
+        metadata: {
+          target_audience: result.target_audience,
+          estimated_roi: result.estimated_roi
+        }
+      });
+
+      // 2. Crear los posts
+      const postPromises = result.posts.map((post: any) => {
+        // Normalizar plataforma
+        let platform = (post.platform || 'multi').toLowerCase();
+        if (platform === 'twitter') platform = 'x';
+        if (platform === 'threads') platform = 'instagram';
+
+        return campaignPostsApi.create(campaign.id, {
+          platform: platform,
+          content: post.copy,
+          image_prompt: post.image_prompt || post.video_prompt,
+          image_url: post.real_image_url,
+          status: 'draft',
+          metadata: {
+            hashtags: post.hashtags
+          }
+        });
+      });
+
+      await Promise.all(postPromises);
+      toast.success(t("dashboard.campaigns.created"), {
+        icon: <CheckCircle2 className="text-green-500" size={16} />
+      });
+    } catch (error) {
+      console.error("Error saving campaign:", error);
+      toast.error("Error al guardar la campaña");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const saveManualPost = async () => {
+    if (!manualContent) return;
+    setIsSaving(true);
+    try {
+      // Para un post manual, primero creamos una campaña genérica o pedimos nombre
+      // Por simplicidad ahora, creamos una campaña "Manual Studio"
+      const campaign = await campaignsApi.create({
+        name: `Manual Studio - ${new Date().toLocaleDateString()}`,
+        description: "Post creado manualmente desde el estudio",
+        status: 'draft'
+      });
+
+      await campaignPostsApi.create(campaign.id, {
+        platform: 'multi',
+        content: manualContent,
+        status: 'draft'
+      });
+
+      toast.success(t("dashboard.campaigns.created"));
+      setManualContent("");
+    } catch (error) {
+      console.error("Error saving manual post:", error);
+      toast.error("Error al guardar el post");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -249,22 +324,31 @@ export function AIContentForge() {
           </TabsContent>
 
           <TabsContent value="manual" className="space-y-4 mt-0 border-none p-0 focus-visible:ring-0">
-             <RichTextEditor 
-                content={manualContent}
-                onChange={setManualContent}
-                label={t("dashboard.content_forge.manual.label")}
-                placeholder={t("dashboard.content_forge.manual.placeholder")}
-             />
-             <div className="flex justify-end gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-8 text-[10px] font-bold uppercase tracking-wider gap-2"
-                  onClick={() => setManualContent("")}
-                >
-                   {t("dashboard.content_forge.manual.clean")}
-                </Button>
-             </div>
+            <RichTextEditor 
+              content={manualContent}
+              onChange={setManualContent}
+              label={t("dashboard.content_forge.manual.label")}
+              placeholder={t("dashboard.content_forge.manual.placeholder")}
+            />
+            <div className="flex justify-end gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="h-8 text-[10px] font-bold uppercase tracking-wider gap-2"
+                onClick={() => setManualContent("")}
+              >
+                {t("dashboard.content_forge.manual.clean")}
+              </Button>
+              <Button 
+                size="sm" 
+                className="h-8 text-[10px] font-bold uppercase tracking-wider gap-2 shadow-sm active:scale-95 transition-all"
+                onClick={saveManualPost}
+                disabled={!manualContent || isSaving}
+              >
+                {isSaving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                {isSaving ? t("dashboard.content_forge.manual.saving") : t("dashboard.content_forge.manual.save_post")}
+              </Button>
+            </div>
           </TabsContent>
         </Tabs>
 
@@ -276,17 +360,29 @@ export function AIContentForge() {
 
         {result && !result.error && (
           <div className="mt-6 pt-6 border-t border-border/40 animate-in fade-in slide-in-from-top-4 duration-500">
-            <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
-              <Wand2 size={16} className="text-primary" />
-              {result.campaign_name}
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                <Wand2 size={16} className="text-primary" />
+                {result.campaign_name}
+              </h3>
+              <Button 
+                size="sm" 
+                variant="default" 
+                className="h-8 px-4 text-[10px] font-black uppercase tracking-[0.1em] gap-2 shadow-lg shadow-primary/20 animate-in zoom-in-95"
+                onClick={saveAICampaign}
+                disabled={isSaving}
+              >
+                {isSaving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
+                {isSaving ? t("dashboard.content_forge.manual.saving") : t("dashboard.content_forge.manual.save")}
+              </Button>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {result.posts?.map((post: any, idx: number) => {
                 const promptForImage = post.image_prompt || post.video_prompt || result.campaign_name;
                 const encodedPrompt = encodeURIComponent(promptForImage);
                 const seed = idx + Math.floor(Date.now() / 10000); 
                 
-                // Prioridad: 1. Imagen DALL-E, 2. Imagen subida por usuario, 3. Pollinations fallback
                 let imageUrl = post.real_image_url;
                 if (!imageUrl && imagePreview) {
                   imageUrl = imagePreview;

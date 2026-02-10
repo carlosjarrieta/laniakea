@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_07_144955) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,6 +61,45 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_144955) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "campaign_posts", force: :cascade do |t|
+    t.bigint "campaign_id", null: false
+    t.string "platform"
+    t.text "content"
+    t.text "image_prompt"
+    t.string "image_url"
+    t.integer "status"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_campaign_posts_on_campaign_id"
+  end
+
+  create_table "campaigns", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.bigint "account_id", null: false
+    t.integer "status"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_campaigns_on_account_id"
+  end
+
+  create_table "connected_accounts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "provider"
+    t.string "uid"
+    t.text "access_token"
+    t.text "refresh_token"
+    t.datetime "expires_at"
+    t.string "name"
+    t.string "image"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_connected_accounts_on_user_id"
   end
 
   create_table "invitations", force: :cascade do |t|
@@ -154,6 +193,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_144955) do
   add_foreign_key "accounts", "plans"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "campaign_posts", "campaigns"
+  add_foreign_key "campaigns", "accounts"
+  add_foreign_key "connected_accounts", "users"
   add_foreign_key "invitations", "accounts"
   add_foreign_key "memberships", "accounts"
   add_foreign_key "memberships", "users"

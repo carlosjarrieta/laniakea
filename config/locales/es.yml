@@ -213,6 +213,9 @@ es:
         placeholder: "Escribe el contenido de tu post aquí..."
         clean: "Limpiar"
         add_media: "Añadir Multimedia"
+        save: "Guardar en Campaña"
+        saving: "Guardando..."
+        save_post: "Guardar Post"
       features:
         copy: "Copy Multi-red"
         creatives: "Creatividades"
@@ -220,6 +223,24 @@ es:
         copy_desc: "Optimizado por IA"
         creatives_desc: "DALL-E 3 Ready"
         video_desc: "IA Gen-Video"
+    campaigns:
+      name: "Nombre"
+      description: "Descripción"
+      status: "Estado"
+      created: "Campaña creada con éxito."
+      updated: "Campaña actualizada con éxito."
+      destroyed: "Campaña eliminada con éxito."
+      platforms:
+        linkedin: "LinkedIn"
+        facebook: "Facebook"
+        x: "X (Twitter)"
+        instagram: "Instagram"
+        tiktok: "TikTok"
+        multi: "Multicanal"
+      states:
+        draft: "Borrador"
+        active: "Activa"
+        archived: "Archivada"
     metrics:
       performance_chart: "Rendimiento de Campañas"
       reach_chart: "Alcance Orgánico vs Pagado"

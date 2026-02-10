@@ -277,7 +277,17 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-  # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+  config.omniauth :facebook, ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET'],
+    scope: 'public_profile',
+    setup: proc { |env|
+      request = Rack::Request.new(env)
+      if request.params['token'].present?
+        env['rack.session'][:linking_token] = request.params['token']
+        Rails.logger.info "OMNIAUTH SETUP: Token guardado en sesión ✓"
+      else
+        Rails.logger.info "OMNIAUTH SETUP: No se encontró token en params"
+      end
+    }
 
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or

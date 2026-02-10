@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  campaign: one
+  platform: MyString
+  content: MyText
+  image_prompt: MyText
+  image_url: MyString
+  status: 1
+  metadata: 
+
+two:
+  campaign: two
+  platform: MyString
+  content: MyText
+  image_prompt: MyText
+  image_url: MyString
+  status: 1
+  metadata: 

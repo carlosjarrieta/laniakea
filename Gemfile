@@ -14,6 +14,7 @@ gem "aws-sdk-s3", "~> 1.213"
 gem "countries"
 gem "stripe"
 gem "jbuilder"
+gem "pagy", "~> 9.3"
 
 # Background Jobs
 gem "sidekiq", "~> 8.1"
@@ -26,7 +27,15 @@ gem "devise", "~> 5.0"
 gem "devise-jwt", "~> 0.13.0"
 
 # AI tools
+# AI tools
 gem 'gemini-ai'
+
+# Social Integrations
+gem "omniauth"
+gem "omniauth-facebook"
+gem "omniauth-rails_csrf_protection"
+gem "koala", "~> 3.5"
+gem "httparty"
 
 
 group :development, :test do
