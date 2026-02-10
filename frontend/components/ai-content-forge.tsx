@@ -4,26 +4,72 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Sparkles, Image as ImageIcon, Video, Wand2, RefreshCw } from "lucide-react";
+import { Sparkles, Image as ImageIcon, Video, Wand2, RefreshCw, Paperclip, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useTranslations } from "@/hooks/use-translations";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import api from "@/lib/api";
+
+const AI_MODELS = [
+  { id: 'gemini', name: 'Gemini 1.5 Flash', provider: 'Google', icon: '✨' },
+  // { id: 'gemini-pro', name: 'Gemini 1.5 Pro', provider: 'Google', icon: '🧠' },
+  { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', icon: '🤖' },
+  // { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', provider: 'OpenAI', icon: '⚡' },
+  // { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', provider: 'OpenAI', icon: '☁️' },
+];
 
 export function AIContentForge() {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [selectedModel, setSelectedModel] = useState("gemini");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { locale } = useLanguage();
   const { t } = useTranslations(locale);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+  };
 
   const handleGenerate = async () => {
     setIsGenerating(true);
     setResult(null);
     try {
-      const response = await api.post("/ai/forge", { prompt });
+      const formData = new FormData();
+      formData.append("prompt", prompt);
+      formData.append("model", selectedModel);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      const response = await api.post("/ai/forge", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       setResult(response.data);
     } catch (error) {
       console.error("Error forging campaign:", error);
@@ -40,10 +86,29 @@ export function AIContentForge() {
       </div>
       
       <CardHeader className="p-4 md:p-6 pb-2">
-        <div className="flex items-center gap-2 mb-1.5">
+        <div className="flex items-center justify-between mb-1.5">
           <Badge className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-sm border-none">
             {t("dashboard.content_forge.agent_active")}
           </Badge>
+
+          <Select value={selectedModel} onValueChange={setSelectedModel}>
+            <SelectTrigger className="h-7 w-[160px] text-[10px] font-bold bg-background/50 border-border/40 focus:ring-1 focus:ring-primary/20 rounded-lg">
+              <SelectValue placeholder="Seleccionar Modelo" />
+            </SelectTrigger>
+            <SelectContent className="bg-background/95 backdrop-blur-md border-border/40">
+              {AI_MODELS.map((model) => (
+                <SelectItem key={model.id} value={model.id} className="text-[10px] font-medium focus:bg-primary/10">
+                  <div className="flex items-center gap-2">
+                    <span>{model.icon}</span>
+                    <div className="flex flex-col">
+                      <span>{model.name}</span>
+                      <span className="text-[8px] opacity-50 uppercase tracking-tighter">{model.provider}</span>
+                    </div>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-baseline gap-2">
           <CardTitle className="text-base md:text-lg font-bold tracking-tight">
@@ -62,10 +127,48 @@ export function AIContentForge() {
         <div className="relative">
           <Textarea 
             placeholder={t("dashboard.content_forge.placeholder")}
-            className="min-h-[100px] md:min-h-[120px] bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50 text-sm resize-none"
+            className="min-h-[100px] md:min-h-[120px] bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50 text-sm resize-none pb-12"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
+
+          {imagePreview && (
+            <div className="absolute top-3 right-3 animate-in zoom-in-50 duration-200">
+              <div className="relative group/preview h-14 w-14 rounded-lg overflow-hidden border border-primary/30 shadow-lg">
+                <img src={imagePreview} className="h-full w-full object-cover" alt="Preview" />
+                <button 
+                  onClick={removeImage}
+                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity"
+                >
+                  <X size={14} className="text-white" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="absolute bottom-3 left-3 flex items-center gap-2">
+            <input
+              type="file"
+              id="forge-image-upload"
+              className="hidden"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+            <label 
+              htmlFor="forge-image-upload"
+              className="flex items-center gap-2 px-3 h-8 rounded-lg bg-background/80 hover:bg-background border border-border/40 text-[10px] font-bold text-muted-foreground hover:text-primary transition-all cursor-pointer shadow-sm active:scale-95"
+            >
+              <Paperclip size={14} />
+              {imageFile ? "Imagen cargada" : "Referencia Visual"}
+            </label>
+            
+            {imageFile && (
+              <Badge variant="outline" className="h-5 px-2 text-[8px] bg-primary/10 border-primary/20 text-primary">
+                Modo Visión Activo
+              </Badge>
+            )}
+          </div>
+
           <div className="absolute bottom-3 right-3">
             <Button 
               size="sm" 
@@ -127,7 +230,13 @@ export function AIContentForge() {
           </div>
         </div>
 
-        {result && (
+        {result && result.error && (
+          <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs font-medium animate-in fade-in slide-in-from-top-2">
+            {result.error}
+          </div>
+        )}
+
+        {result && !result.error && (
           <div className="mt-6 pt-6 border-t border-border/40 animate-in fade-in slide-in-from-top-4 duration-500">
             <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
               <Wand2 size={16} className="text-primary" />
@@ -135,22 +244,23 @@ export function AIContentForge() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {result.posts?.map((post: any, idx: number) => {
-                // Limpiar y extraer palabras clave del prompt de imagen para mayor precisión
-                const cleanKeywords = (post.image_prompt || result.campaign_name)
-                  .replace(/[^\w\s]/gi, '') // Eliminar caracteres especiales
-                  .split(' ')
-                  .filter((w: string) => w.length > 4)
-                  .slice(0, 3)
-                  .join(',');
+                const promptForImage = post.image_prompt || post.video_prompt || result.campaign_name;
+                const encodedPrompt = encodeURIComponent(promptForImage);
+                const seed = idx + Math.floor(Date.now() / 10000); 
                 
-                const seed = idx + Math.floor(Date.now() / 5000); // Variar cada 5 segundos
-                const searchTerms = cleanKeywords.toLowerCase() || 'marketing';
+                // Prioridad: 1. Imagen DALL-E, 2. Imagen subida por usuario, 3. Pollinations fallback
+                let imageUrl = post.real_image_url;
+                if (!imageUrl && imagePreview) {
+                  imageUrl = imagePreview;
+                } else if (!imageUrl) {
+                  imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=800&height=450&nologo=true&seed=${seed}`;
+                }
 
                 return (
                   <Card key={idx} className="bg-background/40 border-border/20 shadow-none flex flex-col overflow-hidden group/post hover:border-primary/40 transition-all duration-300">
                     <div className="aspect-video w-full bg-muted border-b border-border/10 relative overflow-hidden">
                       <img 
-                        src={`https://loremflickr.com/800/450/${searchTerms}/all?lock=${seed}`} 
+                        src={imageUrl} 
                         alt={post.platform}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover/post:scale-105"
                         onLoad={(e) => (e.currentTarget.style.opacity = "1")}

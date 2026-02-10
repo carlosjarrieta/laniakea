@@ -59,7 +59,6 @@ function AppLayoutContent({
 
   // Toggle sidebar - mobile opens overlay, desktop collapses
   const handleSidebarToggle = () => {
-    // Check if we're on mobile (less than md breakpoint = 768px)
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       setMobileOpen(!mobileOpen);
     } else {

@@ -7,8 +7,10 @@ module Ai
         return render json: { error: "El prompt no puede estar vacío" }, status: :unprocessable_entity
       end
 
-      generator = Ai::GeneratorService.new
-      campaign = generator.generate_campaign(params[:prompt])
+      model = params[:model] || 'gemini'
+      image = params[:image]
+      generator = Ai::GeneratorService.new(model: model)
+      campaign = generator.generate_campaign(params[:prompt], image: image)
 
       render json: campaign
     end
