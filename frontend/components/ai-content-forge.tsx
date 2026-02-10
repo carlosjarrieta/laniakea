@@ -16,6 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
+import { Edit3 } from "lucide-react";
 
 import api from "@/lib/api";
 
@@ -34,6 +37,7 @@ export function AIContentForge() {
   const [selectedModel, setSelectedModel] = useState("gemini");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [manualContent, setManualContent] = useState("");
   const { locale } = useLanguage();
   const { t } = useTranslations(locale);
 
@@ -124,111 +128,145 @@ export function AIContentForge() {
       </CardHeader>
       
       <CardContent className="p-4 md:p-6 pt-2 space-y-4">
-        <div className="relative">
-          <Textarea 
-            placeholder={t("dashboard.content_forge.placeholder")}
-            className="min-h-[100px] md:min-h-[120px] bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50 text-sm resize-none pb-12"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-          />
+        <Tabs defaultValue="ai" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 h-9 bg-background/50 border border-border/40 p-1 mb-4">
+            <TabsTrigger value="ai" className="text-[10px] font-bold uppercase tracking-wider gap-2">
+              <Sparkles size={14} />
+              {t("dashboard.content_forge.tabs.ai")}
+            </TabsTrigger>
+            <TabsTrigger value="manual" className="text-[10px] font-bold uppercase tracking-wider gap-2">
+              <Edit3 size={14} />
+              {t("dashboard.content_forge.tabs.manual")}
+            </TabsTrigger>
+          </TabsList>
 
-          {imagePreview && (
-            <div className="absolute top-3 right-3 animate-in zoom-in-50 duration-200">
-              <div className="relative group/preview h-14 w-14 rounded-lg overflow-hidden border border-primary/30 shadow-lg">
-                <img src={imagePreview} className="h-full w-full object-cover" alt="Preview" />
-                <button 
-                  onClick={removeImage}
-                  className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity"
+          <TabsContent value="ai" className="space-y-4 mt-0 border-none p-0 focus-visible:ring-0">
+            <div className="relative">
+              <Textarea 
+                placeholder={t("dashboard.content_forge.placeholder")}
+                className="min-h-[100px] md:min-h-[120px] bg-background/50 border-border/40 focus-visible:ring-1 focus-visible:ring-primary/20 focus-visible:border-primary/50 text-sm resize-none pb-12"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+              />
+
+              {imagePreview && (
+                <div className="absolute top-3 right-3 animate-in zoom-in-50 duration-200">
+                  <div className="relative group/preview h-14 w-14 rounded-lg overflow-hidden border border-primary/30 shadow-lg">
+                    <img src={imagePreview} className="h-full w-full object-cover" alt="Preview" />
+                    <button 
+                      onClick={removeImage}
+                      className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-opacity"
+                    >
+                      <X size={14} className="text-white" />
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                <input
+                  type="file"
+                  id="forge-image-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+                <label 
+                  htmlFor="forge-image-upload"
+                  className="flex items-center gap-2 px-3 h-8 rounded-lg bg-background/80 hover:bg-background border border-border/40 text-[10px] font-bold text-muted-foreground hover:text-primary transition-all cursor-pointer shadow-sm active:scale-95"
                 >
-                  <X size={14} className="text-white" />
-                </button>
+                  <Paperclip size={14} />
+                  {imageFile ? "Imagen cargada" : "Referencia Visual"}
+                </label>
+                
+                {imageFile && (
+                  <Badge variant="outline" className="h-5 px-2 text-[8px] bg-primary/10 border-primary/20 text-primary">
+                    Modo Visión Activo
+                  </Badge>
+                )}
+              </div>
+
+              <div className="absolute bottom-3 right-3">
+                <Button 
+                  size="sm" 
+                  onClick={handleGenerate}
+                  disabled={!prompt || isGenerating}
+                  className="h-8 md:h-9 px-4 font-bold gap-2 shadow-sm"
+                >
+                  {isGenerating ? (
+                    <RefreshCw size={14} className="animate-spin text-primary-foreground" />
+                  ) : (
+                    <Wand2 size={14} className="text-primary-foreground" />
+                  )}
+                  <span className="text-xs">
+                    {isGenerating ? t("dashboard.content_forge.generating") : t("dashboard.content_forge.generate_button")}
+                  </span>
+                </Button>
               </div>
             </div>
-          )}
 
-          <div className="absolute bottom-3 left-3 flex items-center gap-2">
-            <input
-              type="file"
-              id="forge-image-upload"
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            <label 
-              htmlFor="forge-image-upload"
-              className="flex items-center gap-2 px-3 h-8 rounded-lg bg-background/80 hover:bg-background border border-border/40 text-[10px] font-bold text-muted-foreground hover:text-primary transition-all cursor-pointer shadow-sm active:scale-95"
-            >
-              <Paperclip size={14} />
-              {imageFile ? "Imagen cargada" : "Referencia Visual"}
-            </label>
-            
-            {imageFile && (
-              <Badge variant="outline" className="h-5 px-2 text-[8px] bg-primary/10 border-primary/20 text-primary">
-                Modo Visión Activo
-              </Badge>
-            )}
-          </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <Sparkles size={16} />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
+                    {t("dashboard.content_forge.features.copy")}
+                  </p>
+                  <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
+                    {t("dashboard.content_forge.features.copy_desc")}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <ImageIcon size={16} />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
+                    {t("dashboard.content_forge.features.creatives")}
+                  </p>
+                  <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
+                    {t("dashboard.content_forge.features.creatives_desc")}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                  <Video size={16} />
+                </div>
+                <div className="overflow-hidden">
+                  <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
+                    {t("dashboard.content_forge.features.video")}
+                  </p>
+                  <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
+                    {t("dashboard.content_forge.features.video_desc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
 
-          <div className="absolute bottom-3 right-3">
-            <Button 
-              size="sm" 
-              onClick={handleGenerate}
-              disabled={!prompt || isGenerating}
-              className="h-8 md:h-9 px-4 font-bold gap-2 shadow-sm"
-            >
-              {isGenerating ? (
-                <RefreshCw size={14} className="animate-spin text-primary-foreground" />
-              ) : (
-                <Wand2 size={14} className="text-primary-foreground" />
-              )}
-              <span className="text-xs">
-                {isGenerating ? t("dashboard.content_forge.generating") : t("dashboard.content_forge.generate_button")}
-              </span>
-            </Button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-               <Sparkles size={16} />
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
-                {t("dashboard.content_forge.features.copy")}
-              </p>
-              <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
-                {t("dashboard.content_forge.features.copy_desc")}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-               <ImageIcon size={16} />
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
-                {t("dashboard.content_forge.features.creatives")}
-              </p>
-              <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
-                {t("dashboard.content_forge.features.creatives_desc")}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 p-3 bg-background/60 rounded-lg border border-border/40 hover:border-primary/30 transition-colors">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-               <Video size={16} />
-            </div>
-            <div className="overflow-hidden">
-              <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider leading-none mb-1 line-clamp-1">
-                {t("dashboard.content_forge.features.video")}
-              </p>
-              <p className="text-xs font-bold text-foreground leading-none line-clamp-1">
-                {t("dashboard.content_forge.features.video_desc")}
-              </p>
-            </div>
-          </div>
-        </div>
+          <TabsContent value="manual" className="space-y-4 mt-0 border-none p-0 focus-visible:ring-0">
+             <RichTextEditor 
+                content={manualContent}
+                onChange={setManualContent}
+                label={t("dashboard.content_forge.manual.label")}
+                placeholder={t("dashboard.content_forge.manual.placeholder")}
+             />
+             <div className="flex justify-end gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 text-[10px] font-bold uppercase tracking-wider gap-2"
+                  onClick={() => setManualContent("")}
+                >
+                   {t("dashboard.content_forge.manual.clean")}
+                </Button>
+             </div>
+          </TabsContent>
+        </Tabs>
 
         {result && result.error && (
           <div className="mt-4 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs font-medium animate-in fade-in slide-in-from-top-2">
