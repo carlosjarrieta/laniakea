@@ -41,10 +41,13 @@ module Api
           'public_profile',
           'pages_show_list',
           'pages_manage_posts',
-          'pages_read_engagement'
+          'pages_read_engagement',
+          'business_management',
+          'ads_read',
+          'ads_management'
         ].join(',')
         
-        fb_url = "https://www.facebook.com/v19.0/dialog/oauth?" + {
+        fb_url = "https://www.facebook.com/#{ENV['FACEBOOK_API_VERSION'] || 'v24.0'}/dialog/oauth?" + {
           client_id: ENV['FACEBOOK_APP_ID'],
           redirect_uri: callback_url,
           scope: permissions,
@@ -117,7 +120,7 @@ module Api
       def exchange_code_for_token(code)
         callback_url = "#{request.base_url}/api/v1/facebook/callback"
         
-        response = HTTParty.get('https://graph.facebook.com/v19.0/oauth/access_token', {
+        response = HTTParty.get("https://graph.facebook.com/#{ENV['FACEBOOK_API_VERSION'] || 'v24.0'}/oauth/access_token", {
           query: {
             client_id: ENV['FACEBOOK_APP_ID'],
             client_secret: ENV['FACEBOOK_APP_SECRET'],
@@ -131,7 +134,7 @@ module Api
       end
 
       def get_long_lived_token(short_token)
-        response = HTTParty.get('https://graph.facebook.com/v19.0/oauth/access_token', {
+        response = HTTParty.get("https://graph.facebook.com/#{ENV['FACEBOOK_API_VERSION'] || 'v24.0'}/oauth/access_token", {
           query: {
             grant_type: 'fb_exchange_token',
             client_id: ENV['FACEBOOK_APP_ID'],
@@ -145,7 +148,7 @@ module Api
       end
 
       def get_facebook_user_info(access_token)
-        response = HTTParty.get('https://graph.facebook.com/v19.0/me', {
+        response = HTTParty.get("https://graph.facebook.com/#{ENV['FACEBOOK_API_VERSION'] || 'v24.0'}/me", {
           query: {
             fields: 'id,name,picture',
             access_token: access_token

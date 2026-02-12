@@ -18,6 +18,7 @@ export const campaignPostsRoutes = {
   update: (id: number, version?: string) => withApi(`campaign_posts/${id}`, version),
   delete: (id: number, version?: string) => withApi(`campaign_posts/${id}`, version),
   publish: (id: number, version?: string) => withApi(`campaign_posts/${id}/publish`, version),
+  refreshMetrics: (id: number, version?: string) => withApi(`campaign_posts/${id}/refresh_metrics`, version),
 };
 
 export const integrationsRoutes = {
@@ -32,10 +33,15 @@ export const integrationsRoutes = {
   },
 };
 
+export const statsRoutes = {
+  dashboard: (version?: string) => withApi('stats/dashboard', version),
+};
+
 export const endpoints = {
   campaigns: campaignsRoutes,
   campaignPosts: campaignPostsRoutes,
   integrations: integrationsRoutes,
+  stats: statsRoutes,
 };
 
 export default endpoints;

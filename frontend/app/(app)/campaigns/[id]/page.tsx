@@ -2,29 +2,34 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { campaignsApi, Campaign, CampaignPost } from "@/lib/campaigns-api";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import api from "@/lib/api";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Save, 
-  Megaphone, 
+import {
+  ArrowLeft,
+  MapPin,
+  Save,
+  Megaphone,
   MoreHorizontal,
   Calendar,
   Layers,
   Loader2,
   Facebook,
   ExternalLink,
-  CheckCircle2
+  CheckCircle2,
+  RefreshCcw,
+  BarChart2,
+  MousePointer2,
+  Heart
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { campaignPostsApi, campaignsApi, Campaign, CampaignPost } from "@/lib/campaigns-api";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useTranslations } from "@/hooks/use-translations";
 import {
@@ -35,6 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FacebookConnect } from "@/components/facebook-connect";
 import { FacebookPageSelector } from "@/components/facebook-page-selector";
+import { AdsManager } from "@/components/ads-manager";
 
 import { useCampaigns } from "@/hooks/use-campaigns";
 
@@ -43,6 +49,7 @@ export default function CampaignDetailPage() {
   const router = useRouter();
   const id = Number(params.id);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [integrations, setIntegrations] = useState<any[]>([]);
   const { getOne, update, loading } = useCampaigns();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +60,7 @@ export default function CampaignDetailPage() {
 
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+  const [refreshingIds, setRefreshingIds] = useState<number[]>([]);
 
   const { locale } = useLanguage();
   const { t } = useTranslations(locale);
@@ -72,6 +80,10 @@ export default function CampaignDetailPage() {
         description: data.description,
         status: data.status
       });
+
+      // Fetch integrations status
+      const integrationsRes = await api.get("/api/v1/integrations");
+      setIntegrations(integrationsRes.data.integrations || []);
     } catch (error) {
       console.error("Error loading campaign:", error);
       toast.error("Error al cargar la campaña");
@@ -105,6 +117,19 @@ export default function CampaignDetailPage() {
      } finally {
        setSaving(false);
      }
+  };
+
+  const handleRefreshMetrics = async (postId: number) => {
+    setRefreshingIds(prev => [...prev, postId]);
+    try {
+      const result = await campaignPostsApi.refreshMetrics(postId);
+      toast.success(result.message);
+      loadCampaign();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Error al actualizar métricas");
+    } finally {
+      setRefreshingIds(prev => prev.filter(id => id !== postId));
+    }
   };
 
   const openPublishSelector = (postId: number) => {
@@ -254,10 +279,36 @@ export default function CampaignDetailPage() {
                       )}
                     </div>
                     <CardContent className="p-3 space-y-3 flex-grow flex flex-col">
-                      <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed flex-grow">
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {post.content}
                       </p>
                       
+                      {post.status === 'published' && post.metrics && (
+                        <div className="grid grid-cols-3 gap-1 py-1 px-2 bg-muted/30 rounded-lg border border-border/10">
+                          <div className="flex flex-col items-center gap-0.5">
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Vistas</span>
+                            <div className="flex items-center gap-1">
+                              <BarChart2 size={10} className="text-primary/70" />
+                              <span className="text-[10px] font-black">{post.metrics.impressions || 0}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-center gap-0.5 border-x border-border/10">
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Clicks</span>
+                            <div className="flex items-center gap-1">
+                              <MousePointer2 size={10} className="text-primary/70" />
+                              <span className="text-[10px] font-black">{post.metrics.clicks || 0}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-center gap-0.5">
+                            <span className="text-[8px] text-muted-foreground uppercase font-bold">Reacc</span>
+                            <div className="flex items-center gap-1">
+                              <Heart size={10} className="text-primary/70" />
+                              <span className="text-[10px] font-black">{post.metrics.reactions || 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       <div className="pt-2 border-t border-border/10">
                         {post.platform === 'facebook' && post.status !== 'published' ? (
                           <Button 
@@ -270,15 +321,27 @@ export default function CampaignDetailPage() {
                         ) : post.status === 'published' ? (
                           <div className="flex items-center justify-between">
                              <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-1">
-                               <CheckCircle2 size={10} /> Publicado con Éxito
+                               <CheckCircle2 size={10} /> Publicado
                              </span>
-                             {!!post.metadata?.facebook_post_id && (
-                               <Button variant="ghost" size="sm" className="h-6 text-[8px] gap-1 px-1.5" asChild>
-                                 <a href={`https://facebook.com/${post.metadata?.facebook_post_id as string}`} target="_blank" rel="noopener noreferrer">
-                                   Ver Post <ExternalLink size={8} />
-                                 </a>
+                             <div className="flex items-center gap-1">
+                               <Button 
+                                 variant="ghost" 
+                                 size="icon" 
+                                 className="h-6 w-6 rounded-md hover:bg-primary/10 hover:text-primary transition-colors"
+                                 onClick={() => handleRefreshMetrics(post.id)}
+                                 title="Actualizar Métricas"
+                                 disabled={refreshingIds.includes(post.id)}
+                               >
+                                 <RefreshCcw size={10} className={cn(refreshingIds.includes(post.id) && "animate-spin")} />
                                </Button>
-                             )}
+                               {!!post.metadata?.facebook_post_id && (
+                                 <Button variant="ghost" size="sm" className="h-6 text-[8px] gap-1 px-1.5" asChild>
+                                   <a href={`https://facebook.com/${post.metadata?.facebook_post_id as string}`} target="_blank" rel="noopener noreferrer">
+                                     Ver <ExternalLink size={8} />
+                                   </a>
+                                 </Button>
+                               )}
+                             </div>
                           </div>
                         ) : (
                           <div className="flex items-center justify-between opacity-50">
@@ -302,40 +365,72 @@ export default function CampaignDetailPage() {
         </div>
 
         {/* Right Column: Metadata or Stats */}
-        <div className="space-y-6">
-           <Card className="border-border/40 bg-card/40 backdrop-blur-sm h-fit sticky top-6">
-             <CardHeader className="pb-2">
-               <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Detalles Técnicos</CardTitle>
-             </CardHeader>
-             <CardContent className="space-y-4 text-sm">
-                <div className="flex justify-between py-2 border-b border-border/10">
-                  <span className="text-muted-foreground">ID Campaña</span>
-                  <span className="font-mono font-bold text-xs">#{campaign.id}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border/10">
-                  <span className="text-muted-foreground">Creada el</span>
-                  <span className="font-medium">{new Date(campaign.created_at).toLocaleDateString()}</span>
-                </div>
-                <div className="flex justify-between py-2 border-b border-border/10">
-                  <span className="text-muted-foreground">Total Posts</span>
-                  <span className="font-bold">{campaign.campaign_posts?.length || 0}</span>
-                </div>
-                
-                <Separator className="my-4" />
-                
-                <div className="space-y-2">
-                   <h4 className="font-bold text-xs uppercase text-muted-foreground mb-2">Integraciones</h4>
-                   <FacebookConnect 
-                     className="w-full justify-start gap-2 h-9 text-xs border-dashed text-muted-foreground hover:text-primary hover:border-primary/40" 
-                     variant="outline"
-                   />
-                </div>
-             </CardContent>
-           </Card>
+        <div className="space-y-6 lg:sticky lg:top-6 h-fit">
+            <Card className="border-border/40 bg-card/40 backdrop-blur-sm">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Detalles Técnicos</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                 <div className="flex justify-between py-2 border-b border-border/10">
+                   <span className="text-muted-foreground">ID Campaña</span>
+                   <span className="font-mono font-bold text-xs">#{campaign.id}</span>
+                 </div>
+                 <div className="flex justify-between py-2 border-b border-border/10">
+                   <span className="text-muted-foreground">Creada el</span>
+                   <span className="font-medium">{new Date(campaign.created_at).toLocaleDateString()}</span>
+                 </div>
+                 <div className="flex justify-between py-2 border-b border-border/10">
+                   <span className="text-muted-foreground">Total Posts</span>
+                   <span className="font-bold">{campaign.campaign_posts?.length || 0}</span>
+                 </div>
+                 
+                 <Separator className="my-4" />
+                 
+                 <div className="space-y-2">
+                    <h4 className="font-bold text-xs uppercase text-muted-foreground mb-2">Integraciones</h4>
+                    {integrations.some(i => i.provider === 'facebook') ? (
+                      <div className="flex items-center justify-between p-2 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                        <div className="flex items-center gap-2">
+                          <div className="bg-emerald-500 rounded-full p-1">
+                            <CheckCircle2 size={10} className="text-white" />
+                          </div>
+                          <span className="text-[11px] font-bold text-emerald-700">Facebook Conectado</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <FacebookConnect 
+                            variant="ghost" 
+                            className="h-6 px-2 text-[8px] font-bold text-muted-foreground hover:text-primary"
+                            onConnected={loadCampaign}
+                          >
+                            RECONECTAR
+                          </FacebookConnect>
+                          <Badge variant="outline" className="text-[8px] h-4 bg-emerald-500 text-white border-none">ACTIVO</Badge>
+                        </div>
+                      </div>
+                    ) : (
+                      <FacebookConnect 
+                        className="w-full justify-start gap-2 h-9 text-xs border-dashed text-muted-foreground hover:text-primary hover:border-primary/40" 
+                        variant="outline"
+                        onConnected={loadCampaign}
+                      />
+                    )}
+                 </div>
+              </CardContent>
+            </Card>
+
+           {/* Ads Manager Component */}
+           {campaign && (
+             <AdsManager 
+               campaignId={campaign.id}
+               initialDescription={(campaign as any).ad_campaign?.metadata?.description || campaign.description}
+               initialBudget={Number((campaign as any).ad_campaign?.budget) || 10}
+               initialSegmentation={(campaign as any).ad_campaign?.metadata?.segmentation}
+             />
+           )}
         </div>
       </div>
 
-      {selectedPostId && (
+      {selectedPostId !== null && (
         <FacebookPageSelector 
           postId={selectedPostId}
           isOpen={isSelectorOpen}

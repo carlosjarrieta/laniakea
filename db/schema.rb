@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_12_142928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -63,6 +63,19 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "ad_campaigns", force: :cascade do |t|
+    t.bigint "campaign_id", null: false
+    t.integer "status", default: 0
+    t.string "facebook_campaign_id"
+    t.string "facebook_ad_set_id"
+    t.string "facebook_ad_id"
+    t.decimal "budget", precision: 10, scale: 2
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_ad_campaigns_on_campaign_id"
+  end
+
   create_table "campaign_posts", force: :cascade do |t|
     t.bigint "campaign_id", null: false
     t.string "platform"
@@ -73,6 +86,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "metrics"
     t.index ["campaign_id"], name: "index_campaign_posts_on_campaign_id"
   end
 
@@ -84,6 +98,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
     t.jsonb "metadata"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "daily_budget", precision: 10, scale: 2
+    t.decimal "max_spend", precision: 10, scale: 2
+    t.text "target_audience_description"
     t.index ["account_id"], name: "index_campaigns_on_account_id"
   end
 
@@ -193,6 +210,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_10_104013) do
   add_foreign_key "accounts", "plans"
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "ad_campaigns", "campaigns"
   add_foreign_key "campaign_posts", "campaigns"
   add_foreign_key "campaigns", "accounts"
   add_foreign_key "connected_accounts", "users"

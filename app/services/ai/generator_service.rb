@@ -19,9 +19,9 @@ module Ai
       else
         # Allow specific gemini model names or default to gemini-flash-latest
         gemini_model = if @model_choice == 'gemini' || @model_choice == 'gemini-flash'
-                         'gemini-flash-latest'
+                         'gemini-1.5-flash'
                        elsif @model_choice == 'gemini-pro'
-                         'gemini-pro-latest'
+                         'gemini-1.5-pro'
                        else
                          @model_choice # fallback for direct model names
                        end
@@ -110,7 +110,7 @@ module Ai
       campaign_data
     rescue => e
       Rails.logger.error "AI Generator Error (#{@model_choice}): #{e.message}"
-      { error: "No pudimos forjar la campaña en este momento con #{@model_choice}: #{e.message}" }
+      { error: "No pudimos forjar la campaña en este momento con #{@model_choice}. Por favor intenta de nuevo. Detalle: #{e.message}" }
     end
 
     private
@@ -139,6 +139,7 @@ module Ai
       user_parts = [{ text: "Idea de campaña: #{prompt}" }]
       
       if image
+        image.rewind
         image_data = Base64.strict_encode64(image.read)
         user_parts << {
           inline_data: {
@@ -156,7 +157,10 @@ module Ai
       json_string = response.dig('candidates', 0, 'content', 'parts', 0, 'text') || 
                     response.dig(0, 'candidates', 0, 'content', 'parts', 0, 'text') || ""
       
-      raise "Gemini devolvió una respuesta vacía" if json_string.empty?
+      if json_string.empty?
+        Rails.logger.error "Gemini Empty Response: #{response.inspect}"
+        raise "Gemini devolvió una respuesta vacía. Puede estar sobrecargado."
+      end
 
       json_string
     end
@@ -165,6 +169,7 @@ module Ai
       user_content = [{ type: "text", text: "Idea de campaña: #{prompt}. IMPORTANTE: Responde solo con JSON." }]
 
       if image
+        image.rewind
         image_data = Base64.strict_encode64(image.read)
         user_content << {
           type: "image_url",
@@ -188,7 +193,16 @@ module Ai
       )
 
       json_string = response.dig("choices", 0, "message", "content")
-      raise "OpenAI devolvió una respuesta vacía" if json_string.blank?
+      
+      if json_string.blank?
+        Rails.logger.error "OpenAI Empty Response: #{response.inspect}"
+        refusal = response.dig("choices", 0, "message", "refusal")
+        if refusal
+          raise "OpenAI se negó a procesar la solicitud: #{refusal}"
+        else
+          raise "OpenAI devolvió una respuesta vacía sin motivo claro."
+        end
+      end
 
       json_string
     end

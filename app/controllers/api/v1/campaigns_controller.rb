@@ -19,7 +19,10 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def show
-    render json: @campaign.as_json(include: { campaign_posts: { methods: :real_image_url } })
+    render json: @campaign.as_json(include: { 
+      campaign_posts: { methods: :real_image_url },
+      ad_campaign: {}
+    })
   end
 
   def create
@@ -55,6 +58,6 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def campaign_params
-    params.require(:campaign).permit(:name, :description, :status, :metadata)
+    params.require(:campaign).permit(:name, :description, :status, metadata: [:target_audience, :estimated_roi])
   end
 end

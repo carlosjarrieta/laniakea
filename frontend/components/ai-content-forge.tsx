@@ -105,6 +105,8 @@ export function AIContentForge() {
         if (platform === 'twitter') platform = 'x';
         if (platform === 'threads') platform = 'instagram';
 
+        const fileToUpload = !post.real_image_url && imageFile ? imageFile : undefined;
+
         return campaignPostsApi.create(campaign.id, {
           platform: platform,
           content: post.copy,
@@ -114,7 +116,7 @@ export function AIContentForge() {
           metadata: {
             hashtags: post.hashtags
           }
-        });
+        }, fileToUpload);
       });
 
       await Promise.all(postPromises);

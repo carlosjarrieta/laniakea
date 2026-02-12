@@ -14,5 +14,17 @@ module Ai
 
       render json: campaign
     end
+
+    def segment
+      if params[:prompt].blank?
+        return render json: { error: "El prompt no puede estar vacío" }, status: :unprocessable_entity
+      end
+
+      model = params[:model] || 'gpt-4o'
+      service = Ai::SegmentationService.new(params[:prompt], model: model)
+      result = service.generate_targeting
+      
+      render json: result
+    end
   end
 end

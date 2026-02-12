@@ -278,7 +278,7 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   config.omniauth :facebook, ENV['FACEBOOK_APP_ID'], ENV['FACEBOOK_APP_SECRET'],
-    scope: 'public_profile',
+    scope: 'public_profile,pages_show_list,pages_manage_posts,pages_read_engagement,business_management',
     setup: proc { |env|
       request = Rack::Request.new(env)
       if request.params['token'].present?

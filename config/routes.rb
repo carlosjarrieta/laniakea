@@ -3,15 +3,23 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :campaigns do
         resources :campaign_posts, only: [:index, :create]
+        resources :ad_campaigns, only: [:create, :show] do
+          collection do
+            post :segment
+            post :publish
+          end
+        end
       end
       resources :campaign_posts, only: [:update, :destroy] do
         member do
           post :publish
+          post :refresh_metrics
         end
       end
       resources :integrations, only: [:index, :destroy] do
         collection do
           get :facebook_pages
+          get :facebook_ad_accounts
         end
       end
       
@@ -19,6 +27,9 @@ Rails.application.routes.draw do
       # Facebook Auth directo (sin OmniAuth)
       get 'facebook/auth_url', to: 'facebook_auth#auth_url'
       get 'facebook/callback', to: 'facebook_auth#callback'
+
+      # Dashboard Stats
+      get 'stats/dashboard', to: 'stats#dashboard'
     end
   end
   mount ActionCable.server => '/cable'
@@ -74,6 +85,7 @@ Rails.application.routes.draw do
 
   namespace :ai do
     post :forge, to: 'generator#forge'
+    post :segment, to: 'generator#segment'
   end
 
 

@@ -2,7 +2,7 @@ class Api::V1::CampaignPostsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_account
   before_action :set_campaign, only: [:index, :create]
-  before_action :set_post, only: [:update, :destroy, :publish]
+  before_action :set_post, only: [:update, :destroy, :publish, :refresh_metrics]
 
   def index
     @posts = @campaign.campaign_posts.order(created_at: :desc)
@@ -26,6 +26,21 @@ class Api::V1::CampaignPostsController < ApplicationController
       end
     else
       render json: { error: "Plataforma #{@post.platform} no soportada aún para publicación directa" }, status: :bad_request
+    end
+  rescue => e
+    render json: { error: e.message }, status: :internal_server_error
+  end
+
+  def refresh_metrics
+    # Trigger inline for immediate feedback, or background for scalability. 
+    # For user click, inline might be better for now or return accepted.
+    # Let's do inline for MVP to see results immediately.
+    metrics = Facebook::MetricsFetcher.new(@post).call
+    
+    if metrics
+      render json: { message: 'Métricas actualizadas', metrics: metrics }
+    else
+      render json: { error: 'No se pudieron actualizar las métricas' }, status: :unprocessable_entity
     end
   rescue => e
     render json: { error: e.message }, status: :internal_server_error
@@ -68,6 +83,6 @@ class Api::V1::CampaignPostsController < ApplicationController
   end
 
   def post_params
-    params.require(:campaign_post).permit(:platform, :content, :image_prompt, :image_url, :status, :metadata)
+    params.require(:campaign_post).permit(:platform, :content, :image_prompt, :image_url, :status, :image, metadata: [:facebook_post_id, :published_at, :last_error, :page_id, :page_access_token, hashtags: []])
   end
 end

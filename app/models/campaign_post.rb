@@ -26,6 +26,13 @@ class CampaignPost < ApplicationRecord
     Rails.application.routes.url_helpers.rails_blob_url(image, Rails.application.config.action_controller.default_url_options)
   end
 
+  def as_json(options = {})
+    super(options).merge({
+      'real_image_url' => real_image_url,
+      'metrics' => metrics || {}
+    })
+  end
+
   def publish_to_facebook!(page_id, page_access_token)
     return false unless facebook?
     
@@ -46,7 +53,15 @@ class CampaignPost < ApplicationRecord
     end
 
     if result['id']
-      update!(status: :published, metadata: (metadata || {}).merge(facebook_post_id: result['id'], published_at: Time.current))
+      update!(
+        status: :published, 
+        metadata: (metadata || {}).merge(
+          facebook_post_id: result['id'], 
+          published_at: Time.current,
+          page_id: page_id,
+          page_access_token: page_access_token # Store token for metrics fetching
+        )
+      )
       true
     else
       update!(status: :failed)
